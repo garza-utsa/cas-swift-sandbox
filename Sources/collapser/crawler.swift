@@ -12,6 +12,7 @@ struct Crawler {
     var targetPath:String = "."
     var fm:FileManager
     let enumOptions: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants, .skipsHiddenFiles]
+    let fileProps: [URLResourceKey] = [.nameKey, .pathKey, .isDirectoryKey]
 
     init(targetPath:String) {
         self.targetPath = targetPath
@@ -22,31 +23,47 @@ struct Crawler {
     func crawl() {
         do {
             let targetURL:URL = URL(fileURLWithPath: targetPath)
-            let items:[URL] = try fm.contentsOfDirectory(at: targetURL, includingPropertiesForKeys:[.nameKey, .pathKey, .isDirectoryKey], options: enumOptions)
-            print("Found \(items.count) items:")
+            let items:[URL] = try fm.contentsOfDirectory(at: targetURL, includingPropertiesForKeys:fileProps, options: enumOptions)
             if (items.count == 1) {
-                print("consider collapsing this item")
-                print("item: \(items[0])")
+                evaluateSingle(targetURL:items[0])
             } else {
                 for item in items {
-                    let fileAttributes = try item.resourceValues(forKeys:[.isDirectoryKey])
-                    examine(targetURL:item, isDirectory:fileAttributes.isDirectory!)
+                    let fa = try item.resourceValues(forKeys:[.isDirectoryKey])
+                    examine(targetURL:item, isDirectory:fa.isDirectory!)
                 }
             }
+            print("finished!")
         } catch {
             print("Failed to read directory")
         }
     }
     
+    func evaluateSingle(targetURL:URL) {
+        do {
+            let singleItem:URL = targetURL
+            let sa = try singleItem.resourceValues(forKeys:[.nameKey, .isDirectoryKey])
+            let isDirectory = sa.isDirectory ?? false
+            let iName = sa.name!
+            if ((!isDirectory) && (iName == "index.html")) {
+                //collapse the target URL
+                //add the collapsed URL to our CollapsedModel
+                collapse(targetURL:targetURL)
+            }
+        } catch {
+            print("Failed to evaluate single item \(targetURL)")
+        }
+    }
+    
     func examine(targetURL:URL, isDirectory:Bool) {
-        print("Found \(targetURL)")
         if (isDirectory) {
-            print(targetURL.path);
             let recursiveCrawler = Crawler(targetPath:targetURL.path)
-            print("it's a directory!")
             recursiveCrawler.crawl()
         } else {
-            print("it's not a directory!")
         }
+    }
+    
+    func collapse(targetURL:URL) {
+        //given a URL /a/index.html, collapse the content into /a.html, remove the directory /a when complete
+        print("collapse! \(targetURL)")
     }
 }
