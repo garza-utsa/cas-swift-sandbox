@@ -1,5 +1,5 @@
 
-let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
+let target = "/Users/garza/Development-utsa/collapser/test-site"
 
 // PHASE ONE (collapse)
 // crawl targetPath recursively and collapse single item directories
