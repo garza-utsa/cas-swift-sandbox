@@ -83,9 +83,12 @@ struct Crawler {
     }
     
     func snip(file:URL, snippet:String) {
+        var newTarget = file.deletingLastPathComponent()
+        newTarget = newTarget.appendingPathComponent("snippet.html")
+        print("snippet URL is: \(newTarget)")
         do {
             let fileData:Data = snippet.data(using: .utf8)!
-            try fileData.write(to: file, options: [.atomic])
+            try fileData.write(to: newTarget, options: [.atomic])
         } catch Exception.Error(let type, let message) {
             print("Error while trying to overwrite html from \(file)")
             print("\(type):\(message)")
