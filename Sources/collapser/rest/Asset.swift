@@ -26,7 +26,7 @@ struct Page : Codable {
 }
 
 struct StructuredData : Codable {
-    let structedDataNodes:[StructuredDataNode]
+    let structuredDataNodes:[StructuredDataNode]
 }
 
 struct StructuredDataNode : Codable {
@@ -48,7 +48,8 @@ struct CreateResponse : Codable {
 
 func createAssetRequest(title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
     let md:Metadata = Metadata(displayName:title, title:title)
-    let sdn:StructuredData = StructuredData(structedDataNodes: [])
+    let rowNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "row", text:nil, structuredDataNodes: nil)
+    let sdn:StructuredData = StructuredData(structuredDataNodes: [rowNode])
     let p:Page = Page(contentTypePath: "ROOT Global Page - Content Rows",
                       structuredData:sdn,
                       metadata: md,

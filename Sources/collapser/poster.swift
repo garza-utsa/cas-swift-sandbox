@@ -73,15 +73,21 @@ struct Poster {
     
     func post(file:URL, snippet:Document) {
         do {
-            let casuri:String = file.path.dropFirst(49).dropLast(12).lowercased() + "index"
+            let casuri:String = file.path.dropFirst(49).dropLast(12).lowercased()
+            let name:String = "index"
             print("casuri will be: \(casuri)")
+            print("name will be: \(name)")
             let mainDiv:Element = try snippet.getElementsByTag("div").first() ?? Element.init(Tag.init("div"), "")
             let title = try mainDiv.attr("title")
             print("title: \(title)")
             if (title != "") {
                 print("file contet: \(file)")
             }
-            try print(mainDiv.html())
+            let assetObj = createAssetRequest(title: title, parentFolderPath: casuri, name: name, doc: snippet)
+            let encoder = JSONEncoder()
+            let encodedAsset = try encoder.encode(assetObj)
+            try print(encodedAsset)
+            print(String(data: encodedAsset, encoding: .utf8)!)
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse snippet from \(file)")
             print("\(type):\(message)")
