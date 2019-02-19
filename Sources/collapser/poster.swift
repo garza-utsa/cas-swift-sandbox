@@ -8,19 +8,19 @@
 import Foundation
 import SwiftSoup
 
-struct Crawler {
+struct Poster {
     var count:Int = 0
     var targetPath:String = "."
     var fm:FileManager
     let enumOptions: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants, .skipsHiddenFiles]
     let fileProps: [URLResourceKey] = [.nameKey, .pathKey, .isDirectoryKey]
-
+    
     init(targetPath:String) {
         self.targetPath = targetPath
         self.fm = FileManager.default
         //let enumerator = fileManager.enumerator(atPath: ".")
     }
-
+    
     func crawl() {
         do {
             let targetURL:URL = URL(fileURLWithPath: targetPath)
@@ -30,7 +30,7 @@ struct Crawler {
                 let isDirectory = fa.isDirectory ?? false
                 if (isDirectory) {
                     //recurse!
-                    let recursiveCrawler = Crawler(targetPath:item.path)
+                    let recursiveCrawler = Poster(targetPath:item.path)
                     recursiveCrawler.crawl()
                 } else {
                     evaluate(targetURL:item, targetResources:fa)
@@ -44,55 +44,46 @@ struct Crawler {
     func evaluate(targetURL:URL, targetResources:URLResourceValues) {
         let path = targetResources.path ?? ""
         let name = targetResources.name ?? ""
-        if (name == "index.html") {
-            print("parse: \(name) at \(path)")
-            let snippet:String = parseTarget(file:targetURL)
-            if (snippet != "") {
-                snip(file:targetURL, snippet:snippet)
+        if (name == "snippet.html") {
+            //print("parse: \(name) at \(path)")
+            let snippet:Document = parseTarget(file:targetURL)
+            if (snippet.body() != nil) {
+                post(file:targetURL, snippet:snippet)
             } else {
-                print("content-main div not found in \(name)")
+                print("content-main div not found in \(name) for \(path)")
             }
         } else {
-            print("skipping: \(name) at \(path)")
+            //print("skipping: \(name) at \(path)")
         }
     }
     
-    func collapse(targetURL:URL) {
-        //given a URL /a/index.html, collapse the content into /a.html, remove the directory /a when complete
-        print("collapse! \(targetURL)")
-    }
-    
-    func parseTarget(file:URL) -> String {
-        var snippet:String = ""
+    func parseTarget(file:URL) -> Document {
+        var doc:Document = Document("")
         do {
             let html:String = try String(contentsOf:file, encoding: .utf8)
-            let doc:Document = try SwiftSoup.parse(html)
-            let title: Element = try doc.getElementsByTag("h1").last() ?? Element.init(Tag.init("h1"), "")
-            var parentDiv: Element = Element.init(Tag.init("div"), "")
-            let contentDivs:Elements = try doc.getElementsByClass("content_col_wrapper")
-            if (contentDivs.size() == 1) {
-                parentDiv = contentDivs.first()!
-                try parentDiv.attr("title", title.text())
-            }
-            snippet = try parentDiv.outerHtml()
+            doc = try SwiftSoup.parse(html)
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse html from \(file)")
             print("\(type):\(message)")
         } catch {
             print("***ERROR***")
         }
-        return snippet
+        return doc
     }
     
-    func snip(file:URL, snippet:String) {
-        var newTarget = file.deletingLastPathComponent()
-        newTarget = newTarget.appendingPathComponent("snippet.html")
-        print("snippet URL is: \(newTarget)")
+    func post(file:URL, snippet:Document) {
         do {
-            let fileData:Data = snippet.data(using: .utf8)!
-            try fileData.write(to: newTarget, options: [.atomic])
+            let casuri:String = file.path.dropFirst(49).dropLast(12).lowercased() + "index"
+            print("casuri will be: \(casuri)")
+            let mainDiv:Element = try snippet.getElementsByTag("div").first() ?? Element.init(Tag.init("div"), "")
+            let title = try mainDiv.attr("title")
+            print("title: \(title)")
+            if (title != "") {
+                print("file contet: \(file)")
+            }
+            try print(mainDiv.html())
         } catch Exception.Error(let type, let message) {
-            print("Error while trying to overwrite html from \(file)")
+            print("Error while trying to parse snippet from \(file)")
             print("\(type):\(message)")
         } catch {
             print("***ERROR***")
