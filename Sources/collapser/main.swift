@@ -1,12 +1,17 @@
+import Foundation
 
-let target = "/Users/garza/Development-utsa/collapser/test-site"
+let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
 
 // PHASE TWO (truncation)
 // parse each html document
 // only keep the content of the page
 
-//let c = Crawler(targetPath:target)
-//c.crawl()
+/*
+ 
+ let c = Crawler(targetPath:target)
+c.crawl()
+
+ */
 
 // PHASE THREE
 // get back a callapsed model data set
@@ -16,7 +21,14 @@ let target = "/Users/garza/Development-utsa/collapser/test-site"
 // iterate over generated snipped
 // POST each one to cascade web service for page creation
 
-let p = Poster(targetPath:target)
-p.crawl()
+let myGroup = DispatchGroup()
 
+let dQueue = DispatchQueue(label: "edu.utsa.cascade", qos: .utility)
+
+    let p = Poster(targetPath:target, dispatchQueue:dQueue)
+    p.crawl()
+
+while (1 != 2) {
+    //do nothing
+}
 

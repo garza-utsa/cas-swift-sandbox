@@ -67,12 +67,17 @@ struct Crawler {
         do {
             let html:String = try String(contentsOf:file, encoding: .utf8)
             let doc:Document = try SwiftSoup.parse(html)
-            let title: Element = try doc.getElementsByTag("h1").last() ?? Element.init(Tag.init("h1"), "")
+            var title: String = ""
+            let headingElement:Element? = try doc.getElementsByTag("h1").last()
+            if (headingElement != nil) {
+                title = try headingElement!.text()
+            }
             var parentDiv: Element = Element.init(Tag.init("div"), "")
             let contentDivs:Elements = try doc.getElementsByClass("content_col_wrapper")
             if (contentDivs.size() == 1) {
                 parentDiv = contentDivs.first()!
-                try parentDiv.attr("title", title.text())
+                try parentDiv.attr("title", title)
+                try parentDiv.select("h1").remove()
             }
             snippet = try parentDiv.outerHtml()
         } catch Exception.Error(let type, let message) {

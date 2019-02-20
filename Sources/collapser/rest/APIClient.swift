@@ -7,7 +7,7 @@
 import Foundation
 
 public class APIClient {
-    private let baseEndpointUrl = URL(string: "https://localhost:8443/api/v1/")!
+    private let baseEndpointUrl = URL(string: "https://walledev.it.utsa.edu:443/api/v1/")!
     private let session = URLSession(configuration: .default)
     private let username: String
     private let password: String
@@ -46,14 +46,13 @@ public class APIClient {
         task.resume()
     }
     
-    public func post<T: APIRequest>(_ request: T, payload: Data, completion: @escaping ResultCallback<APIResponse<T.Response>>) {
+    public func post<T: APIRequest>(_ request: T, payload: Data, path: String, name: String, completion: @escaping ResultCallback<APIResponse<T.Response>>) {
         let endpoint = self.endpoint(for: request)
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = payload
-        print("about to POST request!")
-        print(endpoint)
+        //print(\(payload))
         let task = session.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {
@@ -65,11 +64,17 @@ public class APIClient {
                         print("api client recv'd \(creationID) from POST request")
                         completion(.success(apiResponse))
                     } else if let message = apiResponse.message {
+                        print(path, name)
                         completion(.failure(APIError.server(message: "server failed asset creation \(message)")))
                     } else {
-                        completion(.failure(APIError.decoding))
+                        //print(path, name)
+                        //print("response was: \(String(describing: data))")
+                        //print(String(data: data, encoding: .utf8)!)
+                        completion(.success(apiResponse))
+                        //completion(.failure(APIError.decoding))
                     }
                 } catch {
+                    print("JSONDECODE Failed")
                     completion(.failure(error))
                 }
             } else if let error = error {

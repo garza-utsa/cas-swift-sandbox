@@ -48,16 +48,28 @@ public struct CreateResponse : Codable {
 }
 
 public func createAssetRequest(title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
+    var arequest:CreateRequest
     let md:Metadata = Metadata(displayName:title, title:title)
-    let rowNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "row", text:nil, structuredDataNodes: nil)
-    let sdn:StructuredData = StructuredData(structuredDataNodes: [rowNode])
-    let p:Page = Page(contentTypePath: "ROOT Global Page - Content Rows",
+    var sdn:StructuredData = StructuredData(structuredDataNodes: [])
+    do {
+        let textType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "type", text: "WYSIWYG", structuredDataNodes: nil)
+        let textEditor:StructuredDataNode = try StructuredDataNode(type: "text", identifier: "editor", text: doc.html(), structuredDataNodes: nil)
+        let columnNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "column", text: nil, structuredDataNodes: [textType, textEditor])
+        let rowNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "row", text:nil, structuredDataNodes: [columnNode])
+        sdn = StructuredData(structuredDataNodes: [rowNode])
+    } catch Exception.Error(let type, let message) {
+        print("Error while trying to parse snippet from \(doc)")
+        print("\(type):\(message)")
+    } catch {
+        print("***ERROR***")
+    }
+    let p:Page = Page(contentTypePath: "ROOT EE Page - Content",
                       structuredData:sdn,
                       metadata: md,
                       parentFolderPath: parentFolderPath,
-                      siteName: "GLOBAL-WWWROOT",
+                      siteName: "GLOBAL-WWWROOT-WS-MOCK",
                       name: name)
     let a:Asset = Asset(page: p)
-    let arequest:CreateRequest = CreateRequest(asset: a)
+    arequest = CreateRequest(asset: a)
     return arequest
 }
