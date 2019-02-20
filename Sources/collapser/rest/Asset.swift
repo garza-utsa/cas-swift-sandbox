@@ -8,7 +8,7 @@
 import Foundation
 import SwiftSoup
 
-struct CreateRequest : Codable {
+public struct CreateRequest : Codable {
     let asset:Asset
 }
 
@@ -41,12 +41,13 @@ struct Metadata : Codable {
     let title:String
 }
 
-struct CreateResponse : Codable {
-    let createdAssetId:String
-    let success:String
+public struct CreateResponse : Codable {
+    let createdAssetId:String?
+    let success:Bool?
+    let message:String?
 }
 
-func createAssetRequest(title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
+public func createAssetRequest(title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
     let md:Metadata = Metadata(displayName:title, title:title)
     let rowNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "row", text:nil, structuredDataNodes: nil)
     let sdn:StructuredData = StructuredData(structuredDataNodes: [rowNode])

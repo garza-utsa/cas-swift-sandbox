@@ -14,6 +14,8 @@ struct Poster {
     var fm:FileManager
     let enumOptions: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants, .skipsHiddenFiles]
     let fileProps: [URLResourceKey] = [.nameKey, .pathKey, .isDirectoryKey]
+    let apiClient = APIClient(username: "admin", password: "admin") //real secure
+    let group = DispatchGroup()
     
     init(targetPath:String) {
         self.targetPath = targetPath
@@ -81,13 +83,23 @@ struct Poster {
             let title = try mainDiv.attr("title")
             print("title: \(title)")
             if (title != "") {
-                print("file contet: \(file)")
+                print("file content: \(file)")
             }
             let assetObj = createAssetRequest(title: title, parentFolderPath: casuri, name: name, doc: snippet)
             let encoder = JSONEncoder()
             let encodedAsset = try encoder.encode(assetObj)
-            try print(encodedAsset)
-            print(String(data: encodedAsset, encoding: .utf8)!)
+            // does not wait. But the code in notify() gets run
+            // after enter() and leave() calls are balanced
+                self.apiClient.post(PostAsset(), payload:encodedAsset) { response in
+                        switch response {
+                        case .success:
+                            print("success?")
+                        case .failure(let error):
+                            print("****POST FAILED****")
+                            print(error)
+                        }
+                        self.group.leave()
+                }
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse snippet from \(file)")
             print("\(type):\(message)")
