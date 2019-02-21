@@ -9,7 +9,13 @@ import Foundation
 import SwiftSoup
 
 public struct CreateRequest : Codable {
+    let authentication:Authentication
     let asset:Asset
+}
+
+struct Authentication : Codable {
+    let username: String
+    let password: String
 }
 
 struct Asset : Codable {
@@ -47,9 +53,10 @@ public struct CreateResponse : Codable {
     let message:String?
 }
 
-public func createAssetRequest(title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
+public func createAssetRequest(u:String, p:String, site:String, contentType:String, title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
     var arequest:CreateRequest
     let md:Metadata = Metadata(displayName:title, title:title)
+    let auth:Authentication = Authentication(username: u, password: p)
     var sdn:StructuredData = StructuredData(structuredDataNodes: [])
     do {
         let textType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "type", text: "WYSIWYG", structuredDataNodes: nil)
@@ -63,13 +70,13 @@ public func createAssetRequest(title:String, parentFolderPath:String, name:Strin
     } catch {
         print("***ERROR***")
     }
-    let p:Page = Page(contentTypePath: "ROOT EE Page - Content",
+    let p:Page = Page(contentTypePath: contentType,
                       structuredData:sdn,
                       metadata: md,
                       parentFolderPath: parentFolderPath,
-                      siteName: "GLOBAL-WWWROOT-WS-MOCK",
+                      siteName: site,
                       name: name)
     let a:Asset = Asset(page: p)
-    arequest = CreateRequest(asset: a)
+    arequest = CreateRequest(authentication: auth, asset: a)
     return arequest
 }

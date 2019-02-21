@@ -7,12 +7,13 @@
 import Foundation
 
 public class APIClient {
-    private let baseEndpointUrl = URL(string: "https://walledev.it.utsa.edu:443/api/v1/")!
+    private let baseEndpointURL:URL
     private let session = URLSession(configuration: .default)
-    private let username: String
-    private let password: String
+    public let username: String
+    public let password: String
 
-    public init(username: String, password: String) {
+    public init(baseEndpointURL:URL, username: String, password: String) {
+        self.baseEndpointURL = baseEndpointURL
         self.username = username
         self.password = password
     }
@@ -28,7 +29,7 @@ public class APIClient {
                     // if it's a success or a failure
                     let apiResponse = try
                         JSONDecoder().decode(APIResponse<T.Response>.self, from: data)
-                    if let creationID = apiResponse.createAssetID {
+                    if let creationID = apiResponse.createdAssetId {
                         print("api client recv'd \(creationID) from POST request")
                         completion(.success(apiResponse))
                     } else if let message = apiResponse.success {
@@ -52,6 +53,8 @@ public class APIClient {
         request.httpMethod = "POST"
         request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = payload
+        
+        print("endpoint: \(request.url)")
         //print(\(payload))
         let task = session.dataTask(with: request) { data, response, error in
             if let data = data {
@@ -60,8 +63,10 @@ public class APIClient {
                     // if it's a success or a failure
                     let apiResponse = try
                         JSONDecoder().decode(APIResponse<T.Response>.self, from: data)
-                    if apiResponse.createAssetID != nil {
-                        //print("api client recv'd \(creationID) from POST request")
+                    //print(apiResponse)
+                    //print(String(decoding: data, as: UTF8.self))
+                    if apiResponse.createdAssetId != nil {
+                        //print("api client recv'd \(apiResponse.createdAssetId ?? "") from POST request")
                         completion(.success(apiResponse))
                     } else if let message = apiResponse.message {
                         //print(path, name)
@@ -87,14 +92,16 @@ public class APIClient {
     /// Encodes a URL based on the given request
     /// Everything needed for a public request to Marvel servers is encoded directly in this URL
     private func endpoint<T: APIRequest>(for request: T) -> URL {
-        guard let baseUrl = URL(string: request.resourceName, relativeTo: baseEndpointUrl) else {
+        guard let baseUrl = URL(string: request.resourceName, relativeTo: baseEndpointURL) else {
             fatalError("Bad resourceName: \(request.resourceName)")
         }
         var components = URLComponents(url: baseUrl, resolvingAgainstBaseURL: true)!
         // Auth query items needed for all api requests
+        /*
         let commonQueryItems = [
             URLQueryItem(name: "u", value: username),
             URLQueryItem(name: "p", value: password)]
+        */
         // Custom query items needed for this specific request
         let customQueryItems: [URLQueryItem]
         do {
@@ -102,7 +109,8 @@ public class APIClient {
         } catch {
             fatalError("Wrong parameters: \(error)")
         }
-        components.queryItems = commonQueryItems + customQueryItems
+        // + commonQueryItems
+        components.queryItems = customQueryItems
         // Construct the final URL with all the previous data
         return components.url!
     }

@@ -14,19 +14,24 @@ struct Poster {
     var fm:FileManager
     let enumOptions: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants, .skipsHiddenFiles]
     let fileProps: [URLResourceKey] = [.nameKey, .pathKey, .isDirectoryKey]
-    let apiClient = APIClient(username: "jgarza", password: "We can make it Saturday forever!") //real secure
     let syncQueue:DispatchQueue
     let semaphore:DispatchSemaphore
-        
-    init(targetPath:String, dispatchQueue:DispatchQueue, semaphore:DispatchSemaphore) {
+    let apiClient:APIClient
+    let siteName:String
+    let targetContentType:String
+
+    init(client:APIClient, site:String, contentType:String, targetPath:String, dispatchQueue:DispatchQueue, semaphore:DispatchSemaphore) {
+        self.apiClient = client
         self.targetPath = targetPath
         self.fm = FileManager.default
         self.syncQueue = dispatchQueue
         self.semaphore = semaphore
+        self.siteName = site
+        self.targetContentType = contentType
         //let enumerator = fileManager.enumerator(atPath: ".")
     }
     
-    func crawl() {
+    mutating func crawl() -> Int {
         do {
             let targetURL:URL = URL(fileURLWithPath: targetPath)
             let items:[URL] = try fm.contentsOfDirectory(at: targetURL, includingPropertiesForKeys:fileProps, options: enumOptions)
@@ -35,18 +40,20 @@ struct Poster {
                 let isDirectory = fa.isDirectory ?? false
                 if (isDirectory) {
                     //recurse!
-                    let recursiveCrawler = Poster(targetPath:item.path, dispatchQueue:syncQueue, semaphore:semaphore)
-                    recursiveCrawler.crawl()
+                    var recursiveCrawler = Poster(client:apiClient, site:siteName, contentType:targetContentType,targetPath:item.path, dispatchQueue:syncQueue, semaphore:semaphore)
+                    self.count = count + recursiveCrawler.crawl()
                 } else {
                     evaluate(targetURL:item, targetResources:fa)
                 }
+                self.count = count + 1
             }
         } catch {
             print("Failed to read directory")
         }
+        return count
     }
     
-    func evaluate(targetURL:URL, targetResources:URLResourceValues) {
+    mutating func evaluate(targetURL:URL, targetResources:URLResourceValues) {
         let path = targetResources.path ?? ""
         let name = targetResources.name ?? ""
         if (name == "snippet.html") {
@@ -81,7 +88,7 @@ struct Poster {
             //print(file)
             //worklaptop: 50 and 13
             //homelaptop: 49 and 13
-            let prefixCount = 49
+            let prefixCount = 50
             let suffixCount = 13
             var casuri:String = file.path.dropFirst(prefixCount).dropLast(suffixCount).lowercased()
             if (casuri == "") {
@@ -96,7 +103,7 @@ struct Poster {
             if (title != "") {
                 //print("file content: \(file)")
             }
-            let assetObj = createAssetRequest(title: title, parentFolderPath: casuri, name: name, doc: snippet)
+            let assetObj = createAssetRequest(u:apiClient.username, p:apiClient.password, site:siteName, contentType:targetContentType, title: title, parentFolderPath: casuri, name: name, doc: snippet)
             let encoder = JSONEncoder()
             let encodedAsset = try encoder.encode(assetObj)
             // does not wait. But the code in notify() gets run
@@ -104,16 +111,16 @@ struct Poster {
             syncQueue.async {
                 self.apiClient.post(PostAsset(), payload:encodedAsset, path:path, name:name) { response in
                     switch response {
-                    case .success:
-                        print("success")
+                    case .success(let response):
+                        print("created: \(response.createdAssetId!)")
                     case .failure(let error):
                         print("****POST FAILED****")
                         print(error)
                     }
                 }
             }
-            semaphore.wait(timeout: .now() + 0.15)
-            
+            let st = semaphore.wait(timeout: .now() + 0.15)
+            print(st)            
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse snippet from \(file)")
             print("\(type):\(message)")

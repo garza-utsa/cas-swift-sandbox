@@ -1,32 +1,48 @@
 import Foundation
 
-let target = "/Users/garza/Development-utsa/collapser/test-site"
+enum runMode {
+    case crawl
+    case sanitize
+    case post
+}
+
+let mode:runMode = .post
+let apiEndpoint:URL = URL(string: "https://walledev.it.utsa.edu:443/api/v1/")!
+let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "ashore-slither-cement") //real secure
+let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
+let siteName = "webmaster-docs"
+let contentType = "WS - TESTING"
+let semaphore = DispatchSemaphore(value: 0)
+let dQueue = DispatchQueue(label: "edu.utsa.cascade", qos: .utility)
+let c = Crawler(targetPath:target)
+let s = Sanitizer(targetPath:target, siteName:siteName)
+var p = Poster(client:apiClient, site: siteName, contentType: contentType, targetPath:target, dispatchQueue:dQueue, semaphore:semaphore)
+
+switch mode {
+    case .crawl:
+        print("starting crawl")
+        c.crawl()
+    case .sanitize:
+        print("starting sanitize")
+        s.crawl()
+    case .post:
+        print("starting post")
+        let processed:Int = p.crawl()
+        print("processed count: \(processed)")
+}
 
 // PHASE TWO (truncation)
 // parse each html document
 // only keep the content of the page
+//c.crawl()
 
-/*
-let c = Crawler(targetPath:target)
-c.crawl()
-*/
 // PHASE THREE
-// get back a callapsed model data set
-// iterate thru each URL and search and replace relative links
+// iterate thru each snippet and search and replace relative links
+//s.crawl()
 
 // PHASE FOUR
 // iterate over generated snipped
 // POST each one to cascade web service for page creation
-
-let myGroup = DispatchGroup()
-
-let semaphore = DispatchSemaphore(value: 0)
-//let queue = DispatchQueue.global()
-let dQueue = DispatchQueue(label: "edu.utsa.cascade", qos: .utility)
-
-let p = Poster(targetPath:target, dispatchQueue:dQueue, semaphore:semaphore)
-    p.crawl()
-
-while (1 != 2) {
-    //do nothing
-}
+//p.crawl()
+let t = semaphore.wait(timeout: .now() + 5)
+print(t)

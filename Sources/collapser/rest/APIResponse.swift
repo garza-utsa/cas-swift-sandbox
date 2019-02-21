@@ -5,6 +5,6 @@ import Foundation
 public struct APIResponse<Response: Decodable>: Codable {
     /// Whether it was ok or not
     public let success: Bool?
-    public let createAssetID: String?
+    public let createdAssetId: String?
     public let message: String?
 }

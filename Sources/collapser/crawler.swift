@@ -53,7 +53,7 @@ struct Crawler {
                 print("content-main div not found in \(name)")
             }
         } else {
-            print("skipping: \(name) at \(path)")
+            //print("skipping: \(name) at \(path)")
         }
     }
     
@@ -73,6 +73,7 @@ struct Crawler {
                 title = try headingElement!.text()
             }
             var parentDiv: Element = Element.init(Tag.init("div"), "")
+            //var titleSpan: Element = Element.init(Tag.init("span"), "")
             let contentDivs:Elements = try doc.getElementsByClass("content_col_wrapper")
             if (contentDivs.size() == 1) {
                 parentDiv = contentDivs.first()!
