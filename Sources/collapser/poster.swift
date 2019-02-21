@@ -15,12 +15,14 @@ struct Poster {
     let enumOptions: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants, .skipsHiddenFiles]
     let fileProps: [URLResourceKey] = [.nameKey, .pathKey, .isDirectoryKey]
     let apiClient = APIClient(username: "jgarza", password: "We can make it Saturday forever!") //real secure
-    let asyncQueue:DispatchQueue
+    let syncQueue:DispatchQueue
+    let semaphore:DispatchSemaphore
         
-    init(targetPath:String, dispatchQueue:DispatchQueue) {
+    init(targetPath:String, dispatchQueue:DispatchQueue, semaphore:DispatchSemaphore) {
         self.targetPath = targetPath
         self.fm = FileManager.default
-        self.asyncQueue = dispatchQueue
+        self.syncQueue = dispatchQueue
+        self.semaphore = semaphore
         //let enumerator = fileManager.enumerator(atPath: ".")
     }
     
@@ -33,7 +35,7 @@ struct Poster {
                 let isDirectory = fa.isDirectory ?? false
                 if (isDirectory) {
                     //recurse!
-                    let recursiveCrawler = Poster(targetPath:item.path, dispatchQueue:asyncQueue)
+                    let recursiveCrawler = Poster(targetPath:item.path, dispatchQueue:syncQueue, semaphore:semaphore)
                     recursiveCrawler.crawl()
                 } else {
                     evaluate(targetURL:item, targetResources:fa)
@@ -77,7 +79,11 @@ struct Poster {
     func post(file:URL, snippet:Document, path:String) {
         do {
             //print(file)
-            var casuri:String = file.path.dropFirst(50).dropLast(13).lowercased()
+            //worklaptop: 50 and 13
+            //homelaptop: 49 and 13
+            let prefixCount = 49
+            let suffixCount = 13
+            var casuri:String = file.path.dropFirst(prefixCount).dropLast(suffixCount).lowercased()
             if (casuri == "") {
                 casuri = "/"
             }
@@ -95,19 +101,19 @@ struct Poster {
             let encodedAsset = try encoder.encode(assetObj)
             // does not wait. But the code in notify() gets run
             // after enter() and leave() calls are balanced
-            asyncQueue.async {
+            syncQueue.async {
                 self.apiClient.post(PostAsset(), payload:encodedAsset, path:path, name:name) { response in
                     switch response {
                     case .success:
-                        //print("success?")
-                        let successStr = ""
-                    case .failure(let _):
+                        print("success")
+                    case .failure(let error):
                         print("****POST FAILED****")
-                        print(casuri)
-                        print(response)
+                        print(error)
                     }
                 }
             }
+            semaphore.wait(timeout: .now() + 0.15)
+            
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse snippet from \(file)")
             print("\(type):\(message)")

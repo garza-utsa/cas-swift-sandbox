@@ -60,17 +60,17 @@ public class APIClient {
                     // if it's a success or a failure
                     let apiResponse = try
                         JSONDecoder().decode(APIResponse<T.Response>.self, from: data)
-                    if let creationID = apiResponse.createAssetID {
-                        print("api client recv'd \(creationID) from POST request")
+                    if apiResponse.createAssetID != nil {
+                        //print("api client recv'd \(creationID) from POST request")
                         completion(.success(apiResponse))
                     } else if let message = apiResponse.message {
-                        print(path, name)
+                        //print(path, name)
                         completion(.failure(APIError.server(message: "server failed asset creation \(message)")))
                     } else {
                         //print(path, name)
                         //print("response was: \(String(describing: data))")
                         //print(String(data: data, encoding: .utf8)!)
-                        completion(.success(apiResponse))
+                        completion(.failure(APIError.decoding))
                         //completion(.failure(APIError.decoding))
                     }
                 } catch {

@@ -1,18 +1,15 @@
 import Foundation
 
-let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
+let target = "/Users/garza/Development-utsa/collapser/test-site"
 
 // PHASE TWO (truncation)
 // parse each html document
 // only keep the content of the page
 
 /*
- 
- let c = Crawler(targetPath:target)
+let c = Crawler(targetPath:target)
 c.crawl()
-
- */
-
+*/
 // PHASE THREE
 // get back a callapsed model data set
 // iterate thru each URL and search and replace relative links
@@ -23,12 +20,13 @@ c.crawl()
 
 let myGroup = DispatchGroup()
 
+let semaphore = DispatchSemaphore(value: 0)
+//let queue = DispatchQueue.global()
 let dQueue = DispatchQueue(label: "edu.utsa.cascade", qos: .utility)
 
-    let p = Poster(targetPath:target, dispatchQueue:dQueue)
+let p = Poster(targetPath:target, dispatchQueue:dQueue, semaphore:semaphore)
     p.crawl()
 
 while (1 != 2) {
     //do nothing
 }
-
