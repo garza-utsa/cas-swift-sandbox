@@ -53,9 +53,6 @@ public class APIClient {
         request.httpMethod = "POST"
         request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = payload
-        
-        print("endpoint: \(request.url)")
-        //print(\(payload))
         let task = session.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {
