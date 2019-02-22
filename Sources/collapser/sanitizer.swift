@@ -15,6 +15,10 @@ struct Sanitizer {
     let enumOptions: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants, .skipsHiddenFiles]
     let fileProps: [URLResourceKey] = [.nameKey, .pathKey, .isDirectoryKey]
     let siteName:String
+    //worklaptop: 50 and 13
+    //homelaptop: 49 and 13
+    let prefixCount = 49
+    let suffixCount = 13
 
     init(targetPath:String, siteName:String) {
         self.targetPath = targetPath
@@ -98,10 +102,6 @@ struct Sanitizer {
     func cleanRefs(file:URL, snippet:Document, path:String) -> Document {
         do {
             //print(file)
-            //worklaptop: 50 and 13
-            //homelaptop: 49 and 13
-            let prefixCount = 50
-            let suffixCount = 13
             var casuri:String = file.path.dropFirst(prefixCount).dropLast(suffixCount).lowercased()
             if (casuri == "") {
                 casuri = "/"
@@ -136,7 +136,7 @@ struct Sanitizer {
                         //print("extension: \(fileref.pathExtension)")
                         fileref.deleteLastPathComponent()
                         fileref = fileref.appendingPathComponent(lastComponent)
-                        let newurl:String = "site://" + siteName + fileref.path.dropFirst(50)
+                        let newurl:String = "site://" + siteName + "/" + fileref.path.dropFirst(50)
                         print("sanitized url: \(newurl)")
                         print("last component: \(lastComponent)")
                         try anchor.attr("href", newurl)
@@ -166,7 +166,7 @@ struct Sanitizer {
                     //print("extension: \(fileref.pathExtension)")
                     fileref.deleteLastPathComponent()
                     fileref = fileref.appendingPathComponent(lastComponent)
-                    let newurl:String = "site://" + siteName + fileref.path.dropFirst(50)
+                    let newurl:String = "site://" + siteName + "/" + fileref.path.dropFirst(50)
                     print("sanitized url: \(newurl)")
                     print("")
                     print("")

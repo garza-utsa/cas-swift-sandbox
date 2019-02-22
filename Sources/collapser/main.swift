@@ -7,11 +7,14 @@ enum runMode {
 }
 
 let mode:runMode = .post
-let apiEndpoint:URL = URL(string: "https://walledev.it.utsa.edu:443/api/v1/")!
-let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "ashore-slither-cement") //real secure
-let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
-let siteName = "webmaster-docs"
-let contentType = "WS - TESTING"
+
+let apiEndpoint:URL = URL(string: "https://localhost:8443/api/v1/")!
+//let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "ashore-slither-cement") //real secure
+let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "admin", password: "admin") //real securelet target = "/Users/garza/Development-utsa/collapser/test-site"
+//let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
+let target = "/Users/garza/Development-utsa/collapser/test-site"
+let siteName = "GLOBAL-WWWROOT"
+let contentType = "ROOT Global Page - Content Rows"
 let semaphore = DispatchSemaphore(value: 0)
 let dQueue = DispatchQueue(label: "edu.utsa.cascade", qos: .utility)
 let c = Crawler(targetPath:target)

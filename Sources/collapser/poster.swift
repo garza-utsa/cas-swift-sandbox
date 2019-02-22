@@ -19,6 +19,11 @@ struct Poster {
     let apiClient:APIClient
     let siteName:String
     let targetContentType:String
+    //print(file)
+    //worklaptop: 50 and 13
+    //homelaptop: 49 and 13
+    let prefixCount = 49
+    let suffixCount = 13
 
     init(client:APIClient, site:String, contentType:String, targetPath:String, dispatchQueue:DispatchQueue, semaphore:DispatchSemaphore) {
         self.apiClient = client
@@ -85,11 +90,6 @@ struct Poster {
     
     func post(file:URL, snippet:Document, path:String) {
         do {
-            //print(file)
-            //worklaptop: 50 and 13
-            //homelaptop: 49 and 13
-            let prefixCount = 50
-            let suffixCount = 13
             var casuri:String = file.path.dropFirst(prefixCount).dropLast(suffixCount).lowercased()
             if (casuri == "") {
                 casuri = "/"
@@ -119,7 +119,7 @@ struct Poster {
                     }
                 }
             }
-            let st = semaphore.wait(timeout: .now() + 0.15)
+            let st = semaphore.wait(timeout: .now() + 0.25)
             print(st)            
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse snippet from \(file)")
