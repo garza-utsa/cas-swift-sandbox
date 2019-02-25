@@ -69,7 +69,7 @@ public class APIClient {
         request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = payload
         self.oq.addOperation {
-            syncQueue.sync{
+            syncQueue.async{
                 let task = self.session.dataTask(with: request) { data, response, error in
                     if let data = data {
                         do {
