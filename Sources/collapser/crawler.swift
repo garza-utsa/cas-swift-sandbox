@@ -74,7 +74,7 @@ struct Crawler {
             }
             var parentDiv: Element = Element.init(Tag.init("div"), "")
             //var titleSpan: Element = Element.init(Tag.init("span"), "")
-            let contentDivs:Elements = try doc.getElementsByClass("content_col_wrapper")
+            let contentDivs:Elements = try doc.select(".admission_col .cat_page_right, .admission_col .entry_page_right")
             if (contentDivs.size() == 1) {
                 parentDiv = contentDivs.first()!
                 try parentDiv.attr("title", title)

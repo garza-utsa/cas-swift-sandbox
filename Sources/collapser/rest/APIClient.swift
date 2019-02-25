@@ -7,7 +7,7 @@
 import Foundation
 
 public class APIClient {
-    private let MAX_CONCURRENT_OPERATION_COUNT = 50
+    private let MAX_CONCURRENT_OPERATION_COUNT = 10
     private let internalQueue: DispatchQueue
     public let oq:OperationQueue = OperationQueue()
     public var completedOperations:Int = 0

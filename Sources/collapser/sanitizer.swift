@@ -17,7 +17,7 @@ struct Sanitizer {
     let siteName:String
     //worklaptop: 50 and 13
     //homelaptop: 49 and 13
-    let prefixCount = 50
+    let prefixCount = 51
     let suffixCount = 13
 
     init(targetPath:String, siteName:String) {
@@ -136,7 +136,7 @@ struct Sanitizer {
                         //print("extension: \(fileref.pathExtension)")
                         fileref.deleteLastPathComponent()
                         fileref = fileref.appendingPathComponent(lastComponent)
-                        let newurl:String = "site://" + siteName + "/" + fileref.path.dropFirst(50)
+                        let newurl:String = "site://" + siteName + "/" + fileref.path.dropFirst(prefixCount)
                         print("sanitized url: \(newurl)")
                         print("last component: \(lastComponent)")
                         try anchor.attr("href", newurl)
@@ -166,7 +166,7 @@ struct Sanitizer {
                     //print("extension: \(fileref.pathExtension)")
                     fileref.deleteLastPathComponent()
                     fileref = fileref.appendingPathComponent(lastComponent)
-                    let newurl:String = "site://" + siteName + "/" + fileref.path.dropFirst(50)
+                    let newurl:String = "site://" + siteName + "/" + fileref.path.dropFirst(prefixCount)
                     print("sanitized url: \(newurl)")
                     print("")
                     print("")
