@@ -17,7 +17,7 @@ struct Sanitizer {
     let siteName:String
     //worklaptop: 50 and 13
     //homelaptop: 49 and 13
-    let prefixCount = 49
+    let prefixCount = 50
     let suffixCount = 13
 
     init(targetPath:String, siteName:String) {

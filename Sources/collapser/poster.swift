@@ -14,23 +14,24 @@ struct Poster {
     var fm:FileManager
     let enumOptions: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants, .skipsHiddenFiles]
     let fileProps: [URLResourceKey] = [.nameKey, .pathKey, .isDirectoryKey]
-    let syncQueue:DispatchQueue
-    let semaphore:DispatchSemaphore
+    //let syncQueue:DispatchQueue
+    //let semaphore:DispatchSemaphore
     let apiClient:APIClient
     let siteName:String
     let targetContentType:String
     //print(file)
     //worklaptop: 50 and 13
     //homelaptop: 49 and 13
-    let prefixCount = 49
+    let prefixCount = 50
     let suffixCount = 13
 
-    init(client:APIClient, site:String, contentType:String, targetPath:String, dispatchQueue:DispatchQueue, semaphore:DispatchSemaphore) {
+    init(client:APIClient, site:String, contentType:String, targetPath:String) {
+        //init(client:APIClient, site:String, contentType:String, targetPath:String, dispatchQueue:DispatchQueue, semaphore:DispatchSemaphore) {
         self.apiClient = client
         self.targetPath = targetPath
         self.fm = FileManager.default
-        self.syncQueue = dispatchQueue
-        self.semaphore = semaphore
+        //self.syncQueue = dispatchQueue
+        //self.semaphore = semaphore
         self.siteName = site
         self.targetContentType = contentType
         //let enumerator = fileManager.enumerator(atPath: ".")
@@ -45,7 +46,8 @@ struct Poster {
                 let isDirectory = fa.isDirectory ?? false
                 if (isDirectory) {
                     //recurse!
-                    var recursiveCrawler = Poster(client:apiClient, site:siteName, contentType:targetContentType,targetPath:item.path, dispatchQueue:syncQueue, semaphore:semaphore)
+                    var recursiveCrawler = Poster(client:apiClient, site:siteName, contentType:targetContentType,targetPath:item.path)
+                    //var recursiveCrawler = Poster(client:apiClient, site:siteName, contentType:targetContentType,targetPath:item.path, dispatchQueue:syncQueue, semaphore:semaphore)
                     self.count = count + recursiveCrawler.crawl()
                 } else {
                     evaluate(targetURL:item, targetResources:fa)
@@ -108,7 +110,7 @@ struct Poster {
             let encodedAsset = try encoder.encode(assetObj)
             // does not wait. But the code in notify() gets run
             // after enter() and leave() calls are balanced
-            syncQueue.async {
+            //syncQueue.async {
                 self.apiClient.post(PostAsset(), payload:encodedAsset, path:path, name:name) { response in
                     switch response {
                     case .success(let response):
@@ -118,9 +120,9 @@ struct Poster {
                         print(error)
                     }
                 }
-            }
-            let st = semaphore.wait(timeout: .now() + 0.25)
-            print(st)            
+            //}
+            //_ = semaphore.wait(timeout: .now() + 0.25)
+            //print(st)            
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse snippet from \(file)")
             print("\(type):\(message)")

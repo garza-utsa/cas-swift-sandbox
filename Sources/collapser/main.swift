@@ -7,19 +7,19 @@ enum runMode {
 }
 
 let mode:runMode = .post
-
+//let apiEndpoint:URL = URL(string: "https://walledev.it.utsa.edu/api/v1/")!
 let apiEndpoint:URL = URL(string: "https://localhost:8443/api/v1/")!
 //let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "ashore-slither-cement") //real secure
-let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "admin", password: "admin") //real securelet target = "/Users/garza/Development-utsa/collapser/test-site"
-//let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
-let target = "/Users/garza/Development-utsa/collapser/test-site"
+let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "admin", password: "admin") //real secure
+//let target = "/Users/garza/Development-utsa/collapser/test-site"
+let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
 let siteName = "GLOBAL-WWWROOT"
-let contentType = "ROOT Global Page - Content Rows"
-let semaphore = DispatchSemaphore(value: 0)
-let dQueue = DispatchQueue(label: "edu.utsa.cascade", qos: .utility)
+let contentType = "ROOT EE Page - Content"
+//let semaphore = DispatchSemaphore(value: 0)
+//let dQueue = DispatchQueue(label: "edu.utsa.cascade", qos: .utility)
 let c = Crawler(targetPath:target)
 let s = Sanitizer(targetPath:target, siteName:siteName)
-var p = Poster(client:apiClient, site: siteName, contentType: contentType, targetPath:target, dispatchQueue:dQueue, semaphore:semaphore)
+var p = Poster(client:apiClient, site: siteName, contentType: contentType, targetPath:target)
 
 switch mode {
     case .crawl:
@@ -30,9 +30,14 @@ switch mode {
         s.crawl()
     case .post:
         print("starting post")
-        let processed:Int = p.crawl()
-        print("processed count: \(processed)")
+        _ = p.crawl()
 }
+
+while (apiClient.oq.operations.count != 0) {
+    _ = DispatchSemaphore(value: 0).wait(timeout: .now() + 5)
+    apiClient.oq.waitUntilAllOperationsAreFinished()
+}
+print("completedOps: \(apiClient.completedOperations)")
 
 // PHASE TWO (truncation)
 // parse each html document
@@ -47,5 +52,5 @@ switch mode {
 // iterate over generated snipped
 // POST each one to cascade web service for page creation
 //p.crawl()
-let t = semaphore.wait(timeout: .now() + 5)
-print(t)
+//let t = semaphore.wait(timeout: .now() + 5)
+//print(t)
