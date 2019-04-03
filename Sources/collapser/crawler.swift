@@ -78,7 +78,7 @@ struct Crawler {
             if (contentDivs.size() == 1) {
                 parentDiv = contentDivs.first()!
                 try parentDiv.attr("title", title)
-                try parentDiv.select("h1").remove()
+                //try parentDiv.select("h1").remove()
             }
             snippet = try parentDiv.outerHtml()
         } catch Exception.Error(let type, let message) {

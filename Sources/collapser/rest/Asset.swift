@@ -59,8 +59,9 @@ public func createAssetRequest(u:String, p:String, site:String, contentType:Stri
     let auth:Authentication = Authentication(username: u, password: p)
     var sdn:StructuredData = StructuredData(structuredDataNodes: [])
     do {
+        let docStr:String = try doc.body()!.html()
         let textType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "type", text: "WYSIWYG", structuredDataNodes: nil)
-        let textEditor:StructuredDataNode = try StructuredDataNode(type: "text", identifier: "editor", text: doc.html(), structuredDataNodes: nil)
+        let textEditor:StructuredDataNode = try StructuredDataNode(type: "text", identifier: "editor", text: docStr, structuredDataNodes: nil)
         let columnNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "column", text: nil, structuredDataNodes: [textType, textEditor])
         let rowNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "row", text:nil, structuredDataNodes: [columnNode])
         sdn = StructuredData(structuredDataNodes: [rowNode])

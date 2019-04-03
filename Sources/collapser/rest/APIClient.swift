@@ -79,7 +79,7 @@ public class APIClient {
                             //print(String(decoding: data, as: UTF8.self))
                             if apiResponse.createdAssetId != nil {
                                 //print("api client recv'd \(apiResponse.createdAssetId ?? "") from POST request")
-                                print("sucess: \(self.state)")
+                                print("success: \(self.state)")
                                 completion(.success(apiResponse))
                             } else if let message = apiResponse.message {
                                 //print(path, name)
