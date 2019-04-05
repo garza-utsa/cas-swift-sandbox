@@ -4,9 +4,10 @@ enum runMode {
     case crawl
     case sanitize
     case post
+    case search
 }
 
-let mode:runMode = .post
+let mode:runMode = .search
 //let apiEndpoint:URL = URL(string: "https://walledev.it.utsa.edu/api/v1/")!
 let apiEndpoint:URL = URL(string: "https://localhost:8443/api/v1/")!
 //let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "ashore-slither-cement") //real secure
@@ -20,6 +21,7 @@ let contentType = "ROOT EE Page - Content"
 let c = Crawler(targetPath:target)
 let s = Sanitizer(targetPath:target, siteName:siteName)
 var p = Poster(client:apiClient, site: siteName, contentType: contentType, targetPath:target)
+let search = Searcher(client: apiClient, searchTerm: "index", siteName: siteName, searchFields: ["path"], searchTypes: ["page"])
 
 switch mode {
     case .crawl:
@@ -31,6 +33,9 @@ switch mode {
     case .post:
         print("starting post")
         _ = p.crawl()
+    case .search:
+        print("starting search")
+        _ = search.searchAndDestroy()
 }
 
 while (apiClient.oq.operations.count != 0) {

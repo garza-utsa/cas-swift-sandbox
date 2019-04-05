@@ -120,9 +120,6 @@ struct Poster {
                         print(error)
                     }
                 }
-            //}
-            //_ = semaphore.wait(timeout: .now() + 0.25)
-            //print(st)            
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse snippet from \(file)")
             print("\(type):\(message)")

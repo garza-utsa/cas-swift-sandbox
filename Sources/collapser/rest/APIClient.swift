@@ -7,7 +7,7 @@
 import Foundation
 
 public class APIClient {
-    private let MAX_CONCURRENT_OPERATION_COUNT = 10
+    private let MAX_CONCURRENT_OPERATION_COUNT = 25
     private let internalQueue: DispatchQueue
     public let oq:OperationQueue = OperationQueue()
     public var completedOperations:Int = 0
@@ -104,6 +104,99 @@ public class APIClient {
                 task.resume()
             }
             _ = semaphore.wait(timeout: .now() + 3)
+        }
+    }
+
+    public func postSearch<T: APIRequest>(_ request: T, payload: Data, completion: @escaping ResultCallback<APISearchResponse<T.Response>>) {
+        let syncQueue:DispatchQueue = DispatchQueue(label: "edu.utsa.vpaa.cascade", qos: .utility)
+        let semaphore:DispatchSemaphore = DispatchSemaphore(value: 0)
+        let endpoint = self.endpoint(for: request)
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = payload
+        self.oq.addOperation {
+            syncQueue.async{
+                let task = self.session.dataTask(with: request) { data, response, error in
+                    if let data = data {
+                        do {
+                            self.state = self.state + 1
+                            let apiResponse = try
+                                JSONDecoder().decode(APISearchResponse<T.Response>.self, from: data)
+                            if apiResponse.matches != nil {
+                                //print("api client recv'd \(apiResponse.createdAssetId ?? "") from POST request")
+                                print("success: \(self.state)")
+                                completion(.success(apiResponse))
+                            } else if let message = apiResponse.message {
+                                //print(path, name)
+                                print("failure: \(self.state)")
+                                completion(.failure(APIError.server(message: "server failed asset creation \(message)")))
+                            } else {
+                                print("failure: \(self.state)")
+                                //print(String(data: data, encoding: .utf8)!)
+                                completion(.failure(APIError.decoding))
+                                //completion(.failure(APIError.decoding))
+                            }
+                        } catch {
+                            print("failure: \(self.state)")
+                            print("JSONDECODE Failed")
+                            completion(.failure(error))
+                        }
+                    } else if let error = error {
+                        print("failure: \(self.state)")
+                        completion(.failure(error))
+                    }
+                }
+                task.resume()
+            }
+            _ = semaphore.wait(timeout: .now() + 1)
+        }
+    }
+
+    public func postDelete<T: APIRequest>(_ request: T, payload: Data, completion: @escaping ResultCallback<APIDeleteResponse<T.Response>>) {
+        let syncQueue:DispatchQueue = DispatchQueue(label: "edu.utsa.vpaa.cascade", qos: .utility)
+        let semaphore:DispatchSemaphore = DispatchSemaphore(value: 0)
+        let endpoint = self.endpoint(for: request)
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = payload
+        self.oq.addOperation {
+            syncQueue.async{
+                let task = self.session.dataTask(with: request) { data, response, error in
+                    if let data = data {
+                        do {
+                            self.state = self.state + 1
+                            let apiResponse = try
+                                JSONDecoder().decode(APIDeleteResponse<T.Response>.self, from: data)
+                            //print(String(decoding: data, as: UTF8.self))
+                            if apiResponse.success != false {
+                                //print("api client recv'd \(apiResponse.createdAssetId ?? "") from POST request")
+                                print("success: \(self.state)")
+                                completion(.success(apiResponse))
+                            } else if let message = apiResponse.message {
+                                //print(path, name)
+                                print("failure: \(self.state)")
+                                completion(.failure(APIError.server(message: "server failed asset creation \(message)")))
+                            } else {
+                                print("failure: \(self.state)")
+                                //print(String(data: data, encoding: .utf8)!)
+                                completion(.failure(APIError.decoding))
+                                //completion(.failure(APIError.decoding))
+                            }
+                        } catch {
+                            print("failure: \(self.state)")
+                            print("JSONDECODE Failed")
+                            completion(.failure(error))
+                        }
+                    } else if let error = error {
+                        print("failure: \(self.state)")
+                        completion(.failure(error))
+                    }
+                }
+                task.resume()
+            }
+            _ = semaphore.wait(timeout: .now() + 0.5)
         }
     }
     
