@@ -7,7 +7,7 @@ enum runMode {
     case search
 }
 
-let mode:runMode = .search
+let mode:runMode = .post
 //let apiEndpoint:URL = URL(string: "https://walledev.it.utsa.edu/api/v1/")!
 let apiEndpoint:URL = URL(string: "https://localhost:8443/api/v1/")!
 //let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "ashore-slither-cement") //real secure

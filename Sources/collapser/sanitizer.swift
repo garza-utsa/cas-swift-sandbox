@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftSoup
+import HTMLEntities
 
 struct Sanitizer {
     var count:Int = 0
@@ -75,7 +76,7 @@ struct Sanitizer {
     
     func updateSnip(file:URL, snippet:String) {
         do {
-            let fileData:Data = snippet.data(using: .utf8)!
+            let fileData:Data = snippet.htmlEscape(allowUnsafeSymbols: true).data(using: .utf8)!
             try fileData.write(to: file, options: [.atomic])
         } catch Exception.Error(let type, let message) {
             print("Error while trying to overwrite html from \(file)")

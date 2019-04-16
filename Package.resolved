@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "HTMLEntities",
+        "repositoryURL": "https://github.com/IBM-Swift/swift-html-entities.git",
+        "state": {
+          "branch": null,
+          "revision": "6cee271d3ea569607fb3c41f5f29d252f2e9e123",
+          "version": "3.0.11"
+        }
+      },
+      {
         "package": "SwiftSoup",
         "repositoryURL": "https://github.com/scinfu/SwiftSoup.git",
         "state": {

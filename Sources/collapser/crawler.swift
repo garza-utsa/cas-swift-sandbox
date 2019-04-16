@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftSoup
+import HTMLEntities
 
 struct Crawler {
     var count:Int = 0
@@ -34,6 +35,7 @@ struct Crawler {
                     recursiveCrawler.crawl()
                 } else {
                     evaluate(targetURL:item, targetResources:fa)
+                    //count = count + 1
                 }
             }
         } catch {
@@ -65,6 +67,7 @@ struct Crawler {
     func parseTarget(file:URL) -> String {
         var snippet:String = ""
         do {
+
             let html:String = try String(contentsOf:file, encoding: .utf8)
             let doc:Document = try SwiftSoup.parse(html)
             var title: String = ""
@@ -79,8 +82,11 @@ struct Crawler {
                 parentDiv = contentDivs.first()!
                 try parentDiv.attr("title", title)
                 //try parentDiv.select("h1").remove()
+                //try parentDiv.text(parentDiv.text().addingASCIIEntities)
             }
             snippet = try parentDiv.outerHtml()
+            //snippet = try SwiftSoup.Parser.unescapeEntities(snippet, false)
+            //snippet = snippet.addingUnicodeEntities
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse html from \(file)")
             print("\(type):\(message)")
