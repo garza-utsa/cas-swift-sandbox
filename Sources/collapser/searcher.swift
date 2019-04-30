@@ -13,6 +13,7 @@ struct Searcher {
     let searchFields:[String]
     let searchTypes:[String]
     let apiClient:APIClient
+    var count:Int = 0
     
     init(client:APIClient, searchTerm:String, siteName:String, searchFields:[String], searchTypes:[String]) {
         self.apiClient = client
@@ -33,7 +34,7 @@ struct Searcher {
                 switch response {
                 case .success(let response):
                     matches = response.matches
-                    print("found \(matches?.count) matches")
+                    print("found \(matches!.count) matches")
                 case .failure(let error):
                     print("****SERACH POST FAILED****")
                     print(error)
@@ -55,7 +56,8 @@ struct Searcher {
                 switch response {
                 case .success(let response):
                     print("found \(response.matches!.count) matches")
-                    self.destroy(matches:response.matches!)
+                    let destroyCount = self.destroy(matches:response.matches!)
+                    print("deleted \(destroyCount) matches")
                 case .failure(let error):
                     print("****SERACH POST FAILED****")
                     print(error)
@@ -66,16 +68,18 @@ struct Searcher {
         }
     }
     
-    func destroy(matches:[Match]) {
+    func destroy(matches:[Match]) -> Int {
         let encoder = JSONEncoder()
+        var internalCount = 0
         do {
             for match in matches {
+                internalCount = internalCount + 1
                 let deleteObj = createDeleteRequest(u: self.apiClient.username, p: self.apiClient.password, match: match)
                 let encodedDelete = try encoder.encode(deleteObj)
                 self.apiClient.postDelete(PostDelete(), payload:encodedDelete) {
                     response in
                     switch response {
-                    case .success(let response):
+                    case .success(_):
                         print("deleted asset")
                     case .failure(let error):
                         print("failed to delete asset")
@@ -86,5 +90,6 @@ struct Searcher {
         } catch {
             print("***ERROR***")
         }
+        return internalCount
     }
 }

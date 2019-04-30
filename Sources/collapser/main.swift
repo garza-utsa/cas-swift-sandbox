@@ -4,36 +4,39 @@ enum runMode {
     case crawl
     case sanitize
     case post
+    case news
     case search
 }
 
-let mode:runMode = .post
-//let apiEndpoint:URL = URL(string: "https://walledev.it.utsa.edu/api/v1/")!
+let mode:runMode = .news
 let apiEndpoint:URL = URL(string: "https://localhost:8443/api/v1/")!
-//let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "ashore-slither-cement") //real secure
-let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "admin", password: "admin") //real secure
-//let target = "/Users/garza/Development-utsa/collapser/test-site"
-let target = "/Users/rjq475/Development-vpaa/collapsed/test-site"
+let localTarget = "/Users/rjq475/Development-vpaa/collapsed/news"
+let contentSelector = ".admission_col .cat_page_right, .admission_col .entry_page_right"
 let siteName = "GRADUATESCHOOL-WWWROOT"
 let contentType = "ROOT EE Page - Content"
-//let semaphore = DispatchSemaphore(value: 0)
-//let dQueue = DispatchQueue(label: "edu.utsa.cascade", qos: .utility)
-let c = Crawler(targetPath:target)
-let s = Sanitizer(targetPath:target, siteName:siteName)
-var p = Poster(client:apiClient, site: siteName, contentType: contentType, targetPath:target)
-let search = Searcher(client: apiClient, searchTerm: "index", siteName: siteName, searchFields: ["path"], searchTypes: ["page"])
+let newsContentType = "news/Blog v1.2"
+let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "admin", password: "admin") //real secure
 
 switch mode {
     case .crawl:
+        let c = Crawler(targetPath:localTarget, targetSelector: contentSelector)
         print("starting crawl")
         c.crawl()
     case .sanitize:
+        let s = Sanitizer(targetPath:localTarget, siteName:siteName)
         print("starting sanitize")
         s.crawl()
     case .post:
+        var p = Poster(client:apiClient, site: siteName, contentType: contentType, targetPath:localTarget)
         print("starting post")
         _ = p.crawl()
+    case .news:
+        print("MODE NEWS")
+        var n = NewsPoster(client:apiClient, site:siteName, contentType: newsContentType, targetPath:localTarget)
+        print("starting news post")
+        _ = n.crawl()
     case .search:
+        let search = Searcher(client: apiClient, searchTerm: "index", siteName: siteName, searchFields: ["path"], searchTypes: ["page"])
         print("starting search")
         _ = search.searchAndDestroy()
 }

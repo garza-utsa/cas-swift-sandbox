@@ -12,12 +12,14 @@ import HTMLEntities
 struct Crawler {
     var count:Int = 0
     var targetPath:String = "."
+    var targetSelector:String = ""
     var fm:FileManager
     let enumOptions: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants, .skipsHiddenFiles]
     let fileProps: [URLResourceKey] = [.nameKey, .pathKey, .isDirectoryKey]
 
-    init(targetPath:String) {
+    init(targetPath:String, targetSelector:String) {
         self.targetPath = targetPath
+        self.targetSelector = targetSelector
         self.fm = FileManager.default
         //let enumerator = fileManager.enumerator(atPath: ".")
     }
@@ -31,7 +33,7 @@ struct Crawler {
                 let isDirectory = fa.isDirectory ?? false
                 if (isDirectory) {
                     //recurse!
-                    let recursiveCrawler = Crawler(targetPath:item.path)
+                    let recursiveCrawler = Crawler(targetPath:item.path, targetSelector: self.targetSelector)
                     recursiveCrawler.crawl()
                 } else {
                     evaluate(targetURL:item, targetResources:fa)
@@ -58,12 +60,7 @@ struct Crawler {
             //print("skipping: \(name) at \(path)")
         }
     }
-    
-    func collapse(targetURL:URL) {
-        //given a URL /a/index.html, collapse the content into /a.html, remove the directory /a when complete
-        print("collapse! \(targetURL)")
-    }
-    
+
     func parseTarget(file:URL) -> String {
         var snippet:String = ""
         do {
@@ -77,7 +74,8 @@ struct Crawler {
             }
             var parentDiv: Element = Element.init(Tag.init("div"), "")
             //var titleSpan: Element = Element.init(Tag.init("span"), "")
-            let contentDivs:Elements = try doc.select(".admission_col .cat_page_right, .admission_col .entry_page_right")
+            let contentDivs:Elements = try doc.select(self.targetSelector)
+            //let contentDivs:Elements = try doc.select(".admission_col .cat_page_right, .admission_col .entry_page_right")
             if (contentDivs.size() == 1) {
                 parentDiv = contentDivs.first()!
                 try parentDiv.attr("title", title)
