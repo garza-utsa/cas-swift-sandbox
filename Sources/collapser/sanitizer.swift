@@ -154,21 +154,28 @@ struct Sanitizer {
                 var fileref = file
                 fileref.deleteLastPathComponent()
                 print("evaluate href: \(src)")
+                var newurl:String = ""
                 if (!src.hasPrefix("http")) {
-                    //print("unsanitized href: \(href)")
-                    while (src.hasPrefix("../")) {
+                    print("unsanitized src: \(src)")
+                    if (src.hasPrefix("../")) {
+                        while (src.hasPrefix("../")) {
+                            fileref.deleteLastPathComponent()
+                            src = String(src.dropFirst(3))
+                            //fileref.appendPathComponent(href)
+                        }
+                        //href = "site://" + siteName + "/" + href
+                        fileref = fileref.appendingPathComponent(src)
+                        let lastComponent = fileref.lastPathComponent
                         fileref.deleteLastPathComponent()
-                        src = String(src.dropFirst(3))
-                        //fileref.appendPathComponent(href)
+                        fileref = fileref.appendingPathComponent(lastComponent)
+                        newurl = "site://" + siteName + "/" + fileref.path.dropFirst(prefixCount)
+                    } else {
+                        if (src.hasPrefix("/images")) {
+                            newurl = "site://" + siteName + src
+                        }
                     }
-                    //href = "site://" + siteName + "/" + href
-                    fileref = fileref.appendingPathComponent(src)
-                    let lastComponent = fileref.lastPathComponent
                     //print("extension: \(fileref.pathExtension)")
-                    fileref.deleteLastPathComponent()
-                    fileref = fileref.appendingPathComponent(lastComponent)
-                    let newurl:String = "site://" + siteName + "/" + fileref.path.dropFirst(prefixCount)
-                    print("sanitized url: \(newurl)")
+                    print("sanitized img src: \(newurl)")
                     print("")
                     print("")
                     try image.attr("src", newurl)

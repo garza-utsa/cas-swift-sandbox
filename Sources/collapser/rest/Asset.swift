@@ -55,6 +55,7 @@ struct StructuredDataNode : Codable {
 struct Metadata : Codable {
     let displayName:String
     let title:String
+    let startDate:String?
 }
 
 struct SearchInformation : Codable {
@@ -124,7 +125,7 @@ public func createSearchRequest(u:String, p:String, searchTerms:String, siteName
 
 public func createAssetRequest(u:String, p:String, site:String, contentType:String, title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
     var arequest:CreateRequest
-    let md:Metadata = Metadata(displayName:title, title:title)
+    let md:Metadata = Metadata(displayName:title, title:title, startDate:"")
     let auth:Authentication = Authentication(username: u, password: p)
     var sdn:StructuredData = StructuredData(structuredDataNodes: [])
     do {
@@ -134,6 +135,39 @@ public func createAssetRequest(u:String, p:String, site:String, contentType:Stri
         let columnNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "column", text: nil, structuredDataNodes: [textType, textEditor])
         let rowNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "row", text:nil, structuredDataNodes: [columnNode])
         sdn = StructuredData(structuredDataNodes: [rowNode])
+    } catch Exception.Error(let type, let message) {
+        print("Error while trying to parse snippet from \(doc)")
+        print("\(type):\(message)")
+    } catch {
+        print("***ERROR***")
+    }
+    let p:Page = Page(contentTypePath: contentType,
+                      structuredData:sdn,
+                      metadata: md,
+                      parentFolderPath: parentFolderPath,
+                      siteName: site,
+                      name: name)
+    let a:Asset = Asset(page: p)
+    arequest = CreateRequest(authentication: auth, asset: a)
+    return arequest
+}
+
+public func createAssetRequest(u:String, p:String, site:String, contentType:String, title:String, parentFolderPath:String, name:String, doc:Document, date:Date) -> CreateRequest {
+    var arequest:CreateRequest
+    let df:DateFormatter = DateFormatter()
+    df.dateFormat = "MMM d, yyyy h:mm:ss a"
+    let md:Metadata = Metadata(displayName:title, title:title, startDate:df.string(from:date))
+    let auth:Authentication = Authentication(username: u, password: p)
+    var sdn:StructuredData = StructuredData(structuredDataNodes: [])
+    do {
+        let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
+        let articleType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "articleType", text: "standard", structuredDataNodes: nil)
+
+        let textEditor:StructuredDataNode = StructuredDataNode(type: "text", identifier: "editor", text: docStr, structuredDataNodes: nil)
+        let column:StructuredDataNode = StructuredDataNode(type: "group", identifier: "column", text: nil, structuredDataNodes: [textEditor])
+        let contentRow:StructuredDataNode = StructuredDataNode(type: "group", identifier: "ContentRow", text: nil, structuredDataNodes: [column])
+        
+        sdn = StructuredData(structuredDataNodes: [articleType, contentRow])
     } catch Exception.Error(let type, let message) {
         print("Error while trying to parse snippet from \(doc)")
         print("\(type):\(message)")
