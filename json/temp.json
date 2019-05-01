@@ -1,0 +1,50 @@
+{
+  "asset": {
+    "page": {
+      "metadata": {
+        "title": "2012 Beldon Scholar Contributes to Fight Against Cancer",
+        "startDate": "Jun 22, 2012 12:00:00 AM",
+        "displayName": "2012 Beldon Scholar Contributes to Fight Against Cancer"
+      },
+      "structuredData": {
+ "structuredDataNodes": [
+          {
+            "type": "text",
+            "identifier": "articleType",
+            "text": "standard",
+            "recycled": false
+          },
+          {
+            "type": "group",
+            "identifier": "ContentRow",
+            "structuredDataNodes": [
+              {
+                "type": "group",
+                "identifier": "column",
+                "structuredDataNodes": [
+                  {
+                    "type": "text",
+                    "identifier": "editor",
+                    "text": "asdf",
+                    "recycled": false
+                  }
+                ],
+                "recycled": false
+              }
+            ],
+            "recycled": false
+          }
+        ]
+
+      },
+      "contentTypePath": "news\/Blog v1.2",
+      "parentFolderPath": "\/_news\/2012\/06\/story",
+      "siteName": "GRADUATESCHOOL-WWWROOT",
+      "name": "2012-beldon-scholar-contributes-to-fight-against-cancer"
+    }
+  },
+  "authentication": {
+    "username": "admin",
+    "password": "admin"
+  }
+}

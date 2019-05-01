@@ -1,0 +1,319 @@
+{
+  "asset": {
+    "page": {
+      "contentTypeId": "6b111bb3ac14000520b18a523326a1d1",
+      "contentTypePath": "news/Blog v1.2",
+      "structuredData": {
+        "structuredDataNodes": [
+
+          {
+            "type": "text",
+            "identifier": "articleType",
+            "text": "standard",
+            "recycled": false
+          },
+
+          {
+            "type": "group",
+            "identifier": "ContentRow",
+            "structuredDataNodes": [
+              {
+                "type": "group",
+                "identifier": "column",
+                "structuredDataNodes": [
+                  {
+                    "type": "text",
+                    "identifier": "span",
+                    "text": "12",
+                    "recycled": false
+                  },
+                  {
+                    "type": "text",
+                    "identifier": "type",
+                    "text": "WYSIWYG",
+                    "recycled": false
+                  },
+                  {
+                    "type": "asset",
+                    "identifier": "block",
+                    "assetType": "block",
+                    "recycled": false
+                  },
+                  {
+                    "type": "text",
+                    "identifier": "editor",
+                    "text": "<p>(Jan. 30, 2012)--The Texas Higher Education Coordinating Board has approved a Ph.D. degree in Psychology to begin at The University of Texas at San Antonio in Fall, 2012. The university's 24th doctoral degree program will be administered in the Department of Psychology within the College of Liberal and Fine Arts.</p>\n<p>The new doctoral program in psychology will build on the collaborative efforts of researchers from military and civilian institutions in the San Antonio area and is expected to become one of the leading programs in the nation for investigating health and mental health care issues that relate to military personnel and their families. Graduates from the program will have the research skills necessary to become leaders in this growth area of military health care, as well as in the broader area of health and wellness. Only one other doctoral program in the country offers a comparable emphasis on research skills that are uniquely tailored to investigate issues related to military health.</p>\n<p>\"This new program will prepare desperately needed specialists in health psychology, and contribute directly to the wellness of our citizenry, particularly our nation's veterans and their families,\" said Dan Gelo, dean of the UTSA College of Liberal and Fine Arts. \"Our graduates will have the needed quantitative skills and research methods to be leaders in the development of new preventions and treatments. I congratulate the psychology faculty for their steady work in developing the program, and thank our partners at the University of Texas at San Antonio Health Science Center and San Antonio Military Medical Center for their vital collaboration.\"</p>\n<p>Previous research has indicated that a large percentage of military personnel deployed to Iraq and Afghanistan suffer from mental health disorders or psychosocial behavioral problems, including post-traumatic stress disorder.</p>\n<p>Recruiting efforts will focus on diverse doctoral candidates with a focus on military health and wellness issues, especially from universities belonging to the Hispanic Association of College and Universities and the Historically Black Colleges and Universities.</p>\n<p>UTSA has submitted the appropriate documentation for SACS (Southern Association of Colleges and Schools) accreditation for the new Ph.D. in Psychology Program.\"</p>\n<p><em>The University of Texas at San Antonio is one of the fastest growing higher education institutions in Texas and one of nine academic universities and six health institutions in the UT System. As a multicultural institution, UTSA aims to be a national research university providing access to educational excellence and preparing citizen leaders for the global environment.</em></p>\n<p><em>UTSA serves nearly 31,000 students in 135 degree programs in the colleges of Architecture, Business, Education and Human Development, Engineering, Honors, Liberal and Fine Arts, Public Policy, Sciences and the Graduate School. Founded in 1969, UTSA is an intellectual and creative resource center and a socioeconomic development catalyst for Texas and beyond. Learn more at<span>&amp;#160;</span><a href=\"http://www.utsa.edu/today/\">UTSAToday</a></em></p>",
+                    "recycled": false
+                  }
+                ],
+                "recycled": false
+              }
+            ],
+            "recycled": false
+          }
+        ]
+      },
+      "pageConfigurations": [
+        {
+          "name": "Standard",
+          "defaultConfiguration": true,
+          "templateId": "ca1f9286ac1400054e50f288c0ba055e",
+          "templatePath": "_cascade/templates/GraduateSchool Page - Content",
+          "formatId": "ca1f9471ac1400054e50f288f145d1cb",
+          "formatPath": "_cascade/templates/site-template",
+          "formatRecycled": false,
+          "pageRegions": [
+            {
+              "name": "A3 PAGE-HEAD_FILES",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f2886b3b8645"
+            },
+            {
+              "name": "A1 GLOBAL-HEAD_FILES",
+              "blockId": "ca1ef6fdac1400054e50f2884fc4be54",
+              "blockPath": "_cascade/blocks/master/global-head-files-gs",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f2889b83140e"
+            },
+            {
+              "name": "B2 GLOBAL-FOOTER",
+              "blockId": "ca1ef6e8ac1400054e50f2884bae101d",
+              "blockPath": "_cascade/blocks/master/global-footer-gs.html",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f288666f5b81"
+            },
+            {
+              "name": "A4 PAGE-SECTION-TOP",
+              "blockId": "ca1ef6baac1400054e50f2888f975fd0",
+              "blockPath": "_banners/site-top-navigation",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f28899b23b38"
+            },
+            {
+              "name": "SITE BANNER",
+              "blockId": "ca1ef636ac1400054e50f288af83f1ee",
+              "blockPath": "_cascade/blocks/index/current page hierarchy with blocks",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatId": "ca1f9324ac1400054e50f288f3ea2eda",
+              "formatPath": "_cascade/formats/site/banner",
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f2883069a41d"
+            },
+            {
+              "name": "B5 PAGE-SCRIPTS",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f2881baf19df"
+            },
+            {
+              "name": "A2 SITE-HEAD_FILES",
+              "blockId": "ca1ef742ac1400054e50f288ffcd0e78",
+              "blockPath": "_cascade/blocks/site/site-head-files",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f2881f7bad81"
+            },
+            {
+              "name": "B1 SITE-FOOTER",
+              "blockId": "ca1ef690ac1400054e50f2888ee35b40",
+              "blockPath": "_cascade/blocks/content/site-footer-gs",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f2886d37b555"
+            },
+            {
+              "name": "SITE LEFTNAV",
+              "blockId": "ca1ef636ac1400054e50f288af83f1ee",
+              "blockPath": "_cascade/blocks/index/current page hierarchy with blocks",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatId": "ca1f9365ac1400054e50f2885ffb81f4",
+              "formatPath": "_cascade/formats/site/navigation-left",
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f288af65ff01"
+            },
+            {
+              "name": "B3 GLOBAL-SCRIPTS",
+              "blockId": "ca1ef70eac1400054e50f2881577cb60",
+              "blockPath": "_cascade/blocks/master/global-scripts-gs",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f288dada5d1c"
+            },
+            {
+              "name": "B0 PAGE-FOOTER",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f28841c61fe7"
+            },
+            {
+              "name": "SITE SIDEBAR",
+              "blockId": "ca1ef636ac1400054e50f288af83f1ee",
+              "blockPath": "_cascade/blocks/index/current page hierarchy with blocks",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatId": "ca1f9358ac1400054e50f288365c55cb",
+              "formatPath": "_cascade/formats/site/sidebar",
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f28877e06342"
+            },
+            {
+              "name": "SITE NEWS",
+              "blockRecycled": false,
+              "noBlock": true,
+              "formatRecycled": false,
+              "noFormat": true,
+              "id": "6e8f0308ac14000520b18a529b812e58"
+            },
+            {
+              "name": "A2 EMERGENCY ALERT",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f28847e0d122"
+            },
+            {
+              "name": "A3 GLOBAL-HEADER",
+              "blockId": "ca1ef730ac1400054e50f288308092a1",
+              "blockPath": "_cascade/blocks/master/global-header-gs.html",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f2888198f1f4"
+            },
+            {
+              "name": "DEFAULT",
+              "blockId": "ca1ef636ac1400054e50f288af83f1ee",
+              "blockPath": "_cascade/blocks/index/current page hierarchy with blocks",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatId": "6b1132eeac14000520b18a52908f8b88",
+              "formatPath": "_cascade/formats/news/blog/blog-post-default",
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "6b1131e1ac14000520b18a52010f28ac"
+            },
+            {
+              "name": "SITE EVENTS",
+              "blockRecycled": false,
+              "noBlock": true,
+              "formatRecycled": false,
+              "noFormat": true,
+              "id": "6e8f0308ac14000520b18a52b1f16333"
+            },
+            {
+              "name": "B4 SITE-SCRIPTS",
+              "blockId": "ca1ef758ac1400054e50f288fe5d481d",
+              "blockPath": "_cascade/blocks/site/site-footer-files",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f288ed40d196"
+            },
+            {
+              "name": "SITE TITLE",
+              "blockId": "ca1ef636ac1400054e50f288af83f1ee",
+              "blockPath": "_cascade/blocks/index/current page hierarchy with blocks",
+              "blockRecycled": false,
+              "noBlock": false,
+              "formatId": "ca1f9370ac1400054e50f288c1aef0da",
+              "formatPath": "_cascade/formats/site/site-title",
+              "formatRecycled": false,
+              "noFormat": false,
+              "id": "21d3dc6fac1400054e50f288357b9cc5"
+            }
+          ],
+          "includeXMLDeclaration": false,
+          "publishable": false,
+          "id": "6b1131e1ac14000520b18a5294f49007"
+        }
+      ],
+      "maintainAbsoluteLinks": false,
+      "shouldBePublished": true,
+      "shouldBeIndexed": true,
+      "lastPublishedDate": "Apr 30, 2019 7:33:43 PM",
+      "lastPublishedBy": "admin",
+      "expirationFolderRecycled": false,
+      "metadata": {
+        "displayName": "Coordinating Board Approves UTSA Ph.D in Psychology to focus on Military Health And Wellness Needs",
+        "title": "Coordinating Board Approves UTSA Ph.D in Psychology to focus on Military Health And Wellness Needs",
+        "summary": "",
+        "teaser": "",
+        "keywords": "",
+        "metaDescription": "",
+        "author": "UTSA Graduate School",
+        "startDate": "Feb 1, 2012 12:00:00 AM",
+        "dynamicFields": [
+          {
+            "name": "Source",
+            "fieldValues": [
+              {
+                "value": ""
+              }
+            ]
+          },
+          {
+            "name": "authoremail",
+            "fieldValues": [
+              {
+                "value": ""
+              }
+            ]
+          },
+          {
+            "name": "include_nav",
+            "fieldValues": [
+              {
+                "value": "No"
+              }
+            ]
+          }
+        ]
+      },
+      "reviewOnSchedule": false,
+      "reviewEvery": 180,
+      "parentFolderId": "6b246d4cac14000520b18a52471e6cf4",
+      "parentFolderPath": "_news/2012/02/story",
+      "lastModifiedDate": "Apr 30, 2019 4:38:16 PM",
+      "lastModifiedBy": "admin",
+      "createdDate": "Apr 30, 2019 1:58:09 PM",
+      "createdBy": "admin",
+      "path": "_news/2012/02/story/template",
+      "siteId": "ca1eebbaac1400054e50f2887e554433",
+      "siteName": "GRADUATESCHOOL-WWWROOT",
+      "tags": [],
+      "name": "template",
+      "id": "6e89dcc7ac14000520b18a523d246d97"
+    }
+  },
+  "success": true
+}
