@@ -6,16 +6,18 @@ enum runMode {
     case post
     case news
     case search
+    case custom
+    case csv
 }
 
-let mode:runMode = .news
+let mode:runMode = .csv
 let apiEndpoint:URL = URL(string: "https://localhost:8443/api/v1/")!
 let localTarget = "/Users/rjq475/Development-vpaa/collapsed/news"
-let contentSelector = ".admission_col .cat_page_right, .admission_col .entry_page_right"
-let siteName = "GRADUATESCHOOL-WWWROOT"
+let contentSelector = ".news_article_info"
+let siteName = "GLOBAL-WWWROOT"
 let contentType = "ROOT EE Page - Content"
 let newsContentType = "news/Blog v1.2"
-let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "admin", password: "admin") //real secure
+let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "We can make it Saturday forever!") //real secure
 
 switch mode {
     case .crawl:
@@ -39,6 +41,14 @@ switch mode {
         let search = Searcher(client: apiClient, searchTerm: "index", siteName: siteName, searchFields: ["path"], searchTypes: ["page"])
         print("starting search")
         _ = search.searchAndDestroy()
+    case .custom:
+        var b = Blocker(client:apiClient, site: "NEWFACULTY-VPUR-WWW", targetPath:"/Users/rjq475/Downloads", definitionPath: "Block - New Faculty")
+        print("starting search")
+        _ = b.crawl()
+    case .csv:
+        var csvr = CSVer(client: apiClient, site: "PROVOST-VPAA-PROVWEB", targetPath: "/Users/rjq475/Downloads", definitionPath: "SITE/SITE Block - Staff Profile")
+        print("starting csv crawl")
+        _ = csvr.crawl()
 }
 
 while (apiClient.oq.operations.count != 0) {

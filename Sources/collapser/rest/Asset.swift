@@ -10,7 +10,12 @@ import SwiftSoup
 
 public struct CreateRequest : Codable {
     let authentication:Authentication
-    let asset:Asset
+    let asset:PageAsset
+}
+
+public struct CreateBlockRequest: Codable {
+    let authentication:Authentication
+    let asset:BlockAsset
 }
 
 public struct CreateSearch : Codable {
@@ -28,8 +33,12 @@ struct Authentication : Codable {
     let password: String
 }
 
-struct Asset : Codable {
+struct PageAsset: Codable {
     let page: Page
+}
+
+struct BlockAsset: Codable {
+    let xhtmlDataDefinitionBlock: xhtmlDataDefinitionBlock
 }
 
 struct Page : Codable {
@@ -41,8 +50,22 @@ struct Page : Codable {
     let name:String
 }
 
+struct xhtmlDataDefinitionBlock : Codable {
+    let structuredData:StructuredData
+    let metadata:Metadata
+    let parentFolderPath:String
+    let siteName:String
+    let name:String
+    let tags:[CascadeTag]
+}
+
+struct CascadeTag : Codable {
+    let name:String
+}
+
 struct StructuredData : Codable {
     let structuredDataNodes:[StructuredDataNode]
+    let definitionPath:String?
 }
 
 struct StructuredDataNode : Codable {
@@ -50,6 +73,8 @@ struct StructuredDataNode : Codable {
     let identifier:String
     let text:String?
     let structuredDataNodes:[StructuredDataNode]?
+    let filePath:String?
+    let assetType:String?
 }
 
 struct Metadata : Codable {
@@ -123,18 +148,81 @@ public func createSearchRequest(u:String, p:String, searchTerms:String, siteName
     return searchRequest
 }
 
+/*
+public func createBlockRequest(u:String, p:String, site:String, definitionPath:String, parentFolderPath:String, name:String, title:String, sdnHeadshotURL:String, sdnName:String, sdnCollegeTitle:String, sdnTitle:String, sdnEducation:String, sdnStaffProfile:String, tags:[String]) ->
+    CreateBlockRequest {
+    var brequest:CreateBlockRequest
+    let md:Metadata = Metadata(displayName:title, title:title, startDate: nil)
+    let auth:Authentication = Authentication(username: u, password: p)
+    var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
+    //let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
+        let headshotFType:StructuredDataNode = StructuredDataNode(type: "asset", identifier: "headshot", text: nil, structuredDataNodes: nil, filePath:sdnHeadshotURL, assetType:"file")
+    let profileTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "staffProfile", text: sdnStaffProfile, structuredDataNodes: nil, filePath: nil, assetType: nil)
+    let educationTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "education", text: sdnEducation, structuredDataNodes: nil, filePath: nil, assetType: nil)
+    let titleTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "title", text: sdnTitle, structuredDataNodes: nil, filePath: nil, assetType: nil)
+    let collegeTitleTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "college-title", text: sdnCollegeTitle, structuredDataNodes: nil, filePath: nil, assetType: nil)
+    let smGroup:StructuredDataNode = StructuredDataNode(type: "group", identifier: "staffMember", text: nil, structuredDataNodes: [headshotFType, collegeTitleTType, titleTType, educationTType, profileTType], filePath: nil, assetType: nil)
+    sdn = StructuredData(structuredDataNodes: [smGroup], definitionPath:definitionPath)
+    var casTags:[CascadeTag] = []
+    for tag in tags {
+        casTags.append(CascadeTag(name: tag))
+    }
+    
+    let b:xhtmlDataDefinitionBlock = xhtmlDataDefinitionBlock(
+                      structuredData:sdn,
+                      metadata: md,
+                      parentFolderPath: parentFolderPath,
+                      siteName: site,
+                      name: name,
+                      tags:casTags)
+    let a:BlockAsset = BlockAsset(xhtmlDataDefinitionBlock: b)
+    brequest = CreateBlockRequest(authentication: auth, asset: a)
+    return brequest
+}
+ */
+
+public func createBlockRequest(u:String, p:String, site:String, definitionPath:String, parentFolderPath:String, name:String, title:String, sdnName:String, sdnCollegeTitle:String, sdnTitle:String, sdnEducation:String, sdnStaffProfile:String, tags:[String]) ->
+    CreateBlockRequest {
+        var brequest:CreateBlockRequest
+        let md:Metadata = Metadata(displayName:title, title:title, startDate: nil)
+        let auth:Authentication = Authentication(username: u, password: p)
+        var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
+        //let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
+        let profileTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "staffProfile", text: sdnStaffProfile, structuredDataNodes: nil, filePath: nil, assetType: nil)
+        let educationTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "education", text: sdnEducation, structuredDataNodes: nil, filePath: nil, assetType: nil)
+        let titleTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "title", text: sdnTitle, structuredDataNodes: nil, filePath: nil, assetType: nil)
+        let collegeTitleTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "college-title", text: sdnCollegeTitle, structuredDataNodes: nil, filePath: nil, assetType: nil)
+        let smGroup:StructuredDataNode = StructuredDataNode(type: "group", identifier: "staffMember", text: nil, structuredDataNodes: [collegeTitleTType, titleTType, educationTType, profileTType], filePath: nil, assetType: nil)
+        sdn = StructuredData(structuredDataNodes: [smGroup], definitionPath:definitionPath)
+        var casTags:[CascadeTag] = []
+        for tag in tags {
+            casTags.append(CascadeTag(name: tag))
+        }
+        
+        let b:xhtmlDataDefinitionBlock = xhtmlDataDefinitionBlock(
+            structuredData:sdn,
+            metadata: md,
+            parentFolderPath: parentFolderPath,
+            siteName: site,
+            name: name,
+            tags:casTags)
+        let a:BlockAsset = BlockAsset(xhtmlDataDefinitionBlock: b)
+        brequest = CreateBlockRequest(authentication: auth, asset: a)
+        return brequest
+}
+
 public func createAssetRequest(u:String, p:String, site:String, contentType:String, title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
     var arequest:CreateRequest
     let md:Metadata = Metadata(displayName:title, title:title, startDate:"")
     let auth:Authentication = Authentication(username: u, password: p)
-    var sdn:StructuredData = StructuredData(structuredDataNodes: [])
+    var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
     do {
         let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
-        let textType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "type", text: "WYSIWYG", structuredDataNodes: nil)
-        let textEditor:StructuredDataNode = StructuredDataNode(type: "text", identifier: "editor", text: docStr, structuredDataNodes: nil)
-        let columnNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "column", text: nil, structuredDataNodes: [textType, textEditor])
-        let rowNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "row", text:nil, structuredDataNodes: [columnNode])
-        sdn = StructuredData(structuredDataNodes: [rowNode])
+        let textType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "type", text: "WYSIWYG", structuredDataNodes: nil, filePath: nil, assetType: nil)
+        let textEditor:StructuredDataNode = StructuredDataNode(type: "text", identifier: "editor", text: docStr, structuredDataNodes: nil, filePath: nil, assetType: nil)
+        let columnNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "column", text: nil, structuredDataNodes: [textType, textEditor], filePath: nil, assetType: nil)
+        let rowNode:StructuredDataNode = StructuredDataNode(type: "group", identifier: "row", text:nil, structuredDataNodes: [columnNode], filePath: nil, assetType: nil)
+        sdn = StructuredData(structuredDataNodes: [rowNode], definitionPath: nil)
     } catch Exception.Error(let type, let message) {
         print("Error while trying to parse snippet from \(doc)")
         print("\(type):\(message)")
@@ -147,7 +235,7 @@ public func createAssetRequest(u:String, p:String, site:String, contentType:Stri
                       parentFolderPath: parentFolderPath,
                       siteName: site,
                       name: name)
-    let a:Asset = Asset(page: p)
+    let a:PageAsset = PageAsset(page: p)
     arequest = CreateRequest(authentication: auth, asset: a)
     return arequest
 }
@@ -155,19 +243,19 @@ public func createAssetRequest(u:String, p:String, site:String, contentType:Stri
 public func createAssetRequest(u:String, p:String, site:String, contentType:String, title:String, parentFolderPath:String, name:String, doc:Document, date:Date) -> CreateRequest {
     var arequest:CreateRequest
     let df:DateFormatter = DateFormatter()
-    df.dateFormat = "MMM d, yyyy h:mm:ss a"
+    df.dateFormat = "MMM d, yyyy, h:mm:ss a"
     let md:Metadata = Metadata(displayName:title, title:title, startDate:df.string(from:date))
     let auth:Authentication = Authentication(username: u, password: p)
-    var sdn:StructuredData = StructuredData(structuredDataNodes: [])
+    var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
     do {
         let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
-        let articleType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "articleType", text: "standard", structuredDataNodes: nil)
+        let articleType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "articleType", text: "custom", structuredDataNodes: nil, filePath: nil, assetType: nil)
 
-        let textEditor:StructuredDataNode = StructuredDataNode(type: "text", identifier: "editor", text: docStr, structuredDataNodes: nil)
-        let column:StructuredDataNode = StructuredDataNode(type: "group", identifier: "column", text: nil, structuredDataNodes: [textEditor])
-        let contentRow:StructuredDataNode = StructuredDataNode(type: "group", identifier: "ContentRow", text: nil, structuredDataNodes: [column])
+        let textEditor:StructuredDataNode = StructuredDataNode(type: "text", identifier: "editor", text: docStr, structuredDataNodes: nil, filePath: nil, assetType: nil)
+        let column:StructuredDataNode = StructuredDataNode(type: "group", identifier: "column", text: nil, structuredDataNodes: [textEditor], filePath: nil, assetType: nil)
+        let contentRow:StructuredDataNode = StructuredDataNode(type: "group", identifier: "ContentRow", text: nil, structuredDataNodes: [column], filePath: nil, assetType: nil)
         
-        sdn = StructuredData(structuredDataNodes: [articleType, contentRow])
+        sdn = StructuredData(structuredDataNodes: [articleType, contentRow], definitionPath: nil)
     } catch Exception.Error(let type, let message) {
         print("Error while trying to parse snippet from \(doc)")
         print("\(type):\(message)")
@@ -180,7 +268,7 @@ public func createAssetRequest(u:String, p:String, site:String, contentType:Stri
                       parentFolderPath: parentFolderPath,
                       siteName: site,
                       name: name)
-    let a:Asset = Asset(page: p)
+    let a:PageAsset = PageAsset(page: p)
     arequest = CreateRequest(authentication: auth, asset: a)
     return arequest
 }

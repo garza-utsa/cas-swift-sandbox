@@ -109,25 +109,28 @@ struct NewsPoster {
             
             var casuri = ""
             
-            let newsTop:Element = try snippet.select(".news_top").first() ?? Element.init(Tag.init("div"), "")
-            let newsBottom:Element = try snippet.select(".news_bottom").first() ?? Element.init(Tag.init("div"), "")
-            let mainDiv:Element = try snippet.getElementsByTag("div").first() ?? Element.init(Tag.init("div"), "")
+            let h3s:Elements = try snippet.select("h3")
+            let dateEl = h3s.get(0)
+            //let sourceEl = h3s.get(1)
+            //try let sourceText = sourceEl.text()
 
+            try print("date: \(dateEl.text())")
+            
+            let mainDiv:Element = try snippet.getElementsByTag("div").first() ?? Element.init(Tag.init("div"), "")
             let title = try mainDiv.attr("title")
             print("title: \(title)")
             
-            let date = try newsTop.select(".capital").first() ?? Element.init(Tag.init("span"), "")
-            try print("date: \(date.text())")
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "MMM dd, yyyy"
-            let dt = try dateFormatter.date(from:date.text()) ?? Date()
+            let dt = try dateFormatter.date(from:dateEl.text()) ?? Date()
             print("date: \(dt)")
             let m:String = try monthAsString(date:dt)
             let y:String = try yearAsString(date:dt)
-            casuri = "/_news/\(y)/\(m)/story"
+            casuri = "/news/\(y)/\(m)/story"
             print("casuri will be: \(casuri)")
             print("name will be: \(name)")
-            try newsTop.remove()
+            try dateEl.remove()
+            //try sourceEl.remove()
             //print("\(snippet)")
 
             if (title != "") {
@@ -139,7 +142,7 @@ struct NewsPoster {
             // does not wait. But the code in notify() gets run
             // after enter() and leave() calls are balanced
             //syncQueue.async {
-
+            print("will post asset: \(encodedAsset)")
             self.apiClient.post(PostAsset(), payload:encodedAsset, path:path, name:name) { response in
                 switch response {
                 case .success(let response):
@@ -149,7 +152,6 @@ struct NewsPoster {
                     print(error)
                 }
             }
-
         } catch Exception.Error(let type, let message) {
             print("Error while trying to parse snippet from \(file)")
             print("\(type):\(message)")

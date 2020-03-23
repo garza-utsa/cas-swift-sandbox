@@ -68,14 +68,14 @@ struct Crawler {
             let html:String = try String(contentsOf:file, encoding: .utf8)
             let doc:Document = try SwiftSoup.parse(html)
             var title: String = ""
-            let headingElement:Element? = try doc.getElementsByTag("h1").last()
+            let headingElement:Element? = try doc.getElementsByTag("h2").last()
             if (headingElement != nil) {
                 title = try headingElement!.text()
             }
             var parentDiv: Element = Element.init(Tag.init("div"), "")
-            //var titleSpan: Element = Element.init(Tag.init("span"), "")
+            var titleSpan: Element = Element.init(Tag.init("span"), "")
             let contentDivs:Elements = try doc.select(self.targetSelector)
-            //let contentDivs:Elements = try doc.select(".admission_col .cat_page_right, .admission_col .entry_page_right")
+            //let contentDivs:Elements = try doc.select(".news_article_info")
             if (contentDivs.size() == 1) {
                 parentDiv = contentDivs.first()!
                 try parentDiv.attr("title", title)
