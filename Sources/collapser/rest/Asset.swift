@@ -52,11 +52,11 @@ struct Page : Codable {
 
 struct xhtmlDataDefinitionBlock : Codable {
     let structuredData:StructuredData
-    let metadata:Metadata
+    //let metadata:Metadata?
     let parentFolderPath:String
     let siteName:String
     let name:String
-    let tags:[CascadeTag]
+    //let tags:[CascadeTag]
 }
 
 struct CascadeTag : Codable {
@@ -80,7 +80,6 @@ struct StructuredDataNode : Codable {
 struct Metadata : Codable {
     let displayName:String
     let title:String
-    let startDate:String?
 }
 
 struct SearchInformation : Codable {
@@ -152,7 +151,7 @@ public func createSearchRequest(u:String, p:String, searchTerms:String, siteName
 public func createBlockRequest(u:String, p:String, site:String, definitionPath:String, parentFolderPath:String, name:String, title:String, sdnHeadshotURL:String, sdnName:String, sdnCollegeTitle:String, sdnTitle:String, sdnEducation:String, sdnStaffProfile:String, tags:[String]) ->
     CreateBlockRequest {
     var brequest:CreateBlockRequest
-    let md:Metadata = Metadata(displayName:title, title:title, startDate: nil)
+    let md:Metadata = Metadata(displayName:title, title:title)
     let auth:Authentication = Authentication(username: u, password: p)
     var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
     //let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
@@ -180,11 +179,11 @@ public func createBlockRequest(u:String, p:String, site:String, definitionPath:S
     return brequest
 }
  */
-
+/*
 public func createBlockRequest(u:String, p:String, site:String, definitionPath:String, parentFolderPath:String, name:String, title:String, sdnName:String, sdnCollegeTitle:String, sdnTitle:String, sdnEducation:String, sdnStaffProfile:String, tags:[String]) ->
     CreateBlockRequest {
         var brequest:CreateBlockRequest
-        let md:Metadata = Metadata(displayName:title, title:title, startDate: nil)
+        let md:Metadata = Metadata(displayName:title, title:title)
         let auth:Authentication = Authentication(username: u, password: p)
         var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
         //let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
@@ -210,10 +209,11 @@ public func createBlockRequest(u:String, p:String, site:String, definitionPath:S
         brequest = CreateBlockRequest(authentication: auth, asset: a)
         return brequest
 }
+*/
 
 public func createAssetRequest(u:String, p:String, site:String, contentType:String, title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
     var arequest:CreateRequest
-    let md:Metadata = Metadata(displayName:title, title:title, startDate:"")
+    let md:Metadata = Metadata(displayName:title, title:title)
     let auth:Authentication = Authentication(username: u, password: p)
     var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
     do {
@@ -244,7 +244,7 @@ public func createAssetRequest(u:String, p:String, site:String, contentType:Stri
     var arequest:CreateRequest
     let df:DateFormatter = DateFormatter()
     df.dateFormat = "MMM d, yyyy, h:mm:ss a"
-    let md:Metadata = Metadata(displayName:title, title:title, startDate:df.string(from:date))
+    let md:Metadata = Metadata(displayName:title, title:title)
     let auth:Authentication = Authentication(username: u, password: p)
     var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
     do {
