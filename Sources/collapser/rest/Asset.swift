@@ -52,11 +52,11 @@ struct Page : Codable {
 
 struct xhtmlDataDefinitionBlock : Codable {
     let structuredData:StructuredData
-    //let metadata:Metadata?
+    let metadata:Metadata?
     let parentFolderPath:String
     let siteName:String
     let name:String
-    //let tags:[CascadeTag]
+    let tags:[CascadeTag]
 }
 
 struct CascadeTag : Codable {
@@ -178,8 +178,8 @@ public func createBlockRequest(u:String, p:String, site:String, definitionPath:S
     brequest = CreateBlockRequest(authentication: auth, asset: a)
     return brequest
 }
- */
-/*
+*/
+
 public func createBlockRequest(u:String, p:String, site:String, definitionPath:String, parentFolderPath:String, name:String, title:String, sdnName:String, sdnCollegeTitle:String, sdnTitle:String, sdnEducation:String, sdnStaffProfile:String, tags:[String]) ->
     CreateBlockRequest {
         var brequest:CreateBlockRequest
@@ -209,7 +209,7 @@ public func createBlockRequest(u:String, p:String, site:String, definitionPath:S
         brequest = CreateBlockRequest(authentication: auth, asset: a)
         return brequest
 }
-*/
+
 
 public func createAssetRequest(u:String, p:String, site:String, contentType:String, title:String, parentFolderPath:String, name:String, doc:Document) -> CreateRequest {
     var arequest:CreateRequest

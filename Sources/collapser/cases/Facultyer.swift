@@ -9,7 +9,7 @@ import Foundation
 import SwiftSoup
 import CSV
 
-struct CSVer {
+struct Facultyer {
     var count:Int = 0
     var targetPath:String = "."
     var definitionPath:String = ""
@@ -51,7 +51,7 @@ struct CSVer {
     mutating func evaluate(targetURL:URL, targetResources:URLResourceValues) {
         let path = targetResources.path ?? ""
         let name = targetResources.name ?? ""
-        if (name == "personnel.csv") {
+        if (name == "FY21 New Faculty for Web.csv") {
             //print("parse: \(name) at \(path)")
             print(targetURL.relativePath)
             let stream = InputStream(fileAtPath: targetURL.relativePath)!
@@ -80,62 +80,66 @@ struct CSVer {
     }
     
     func buildProfile(row:[String]) -> CreateBlockRequest {
-        var casuri = "/about/_staff"
+        let casuri = "/_cascade/blocks/2020-faculty"
         var name:String = "test-uri-name"
         var sdnTitle:String = "test block title"
         var sdnName:String = "Test Name Goes Here"
-        var sdnBuilding:String = "MB 4.120"
-        var sdnPhone:String = "(210) 458-4110"
-        var sdnEmail:String = "vpaacomms@utsa.edu"
+        
         //0: Full Name
         //1: Title
         //2: Building
         //3: Phone
         //4: Email
-        sdnName = "\(row[0])"
-        sdnTitle = "\(row[1])"
-        if (row[2] != "") {
-            sdnBuilding = "\(row[2])"
-        }
-        if (row[3] != "") {
-            sdnPhone = "\(row[3])"
-        }
-        if (row[4] != "") {
-            sdnEmail = "\(row[4])"
-        }
+        let firstName = "\(row[0])"
+        let lastName = "\(row[1])"
+        let fullCollegeName = "\(row[2])"
+        let dept = "\(row[3])"
+        let title = "\(row[4])"
+        let degree = "\(row[5])"
+        let institution = "\(row[6])"
+        let pictured = "\(row[7])"
+        let headshot = "\(row[1]).\(row[0]).png"
+        name = "\(row[1])-\(row[0])"
+        sdnName = "\(firstName) \(lastName)"
+        sdnTitle = "\(title)"
+        let sdnCollegeTitle = "\(title), \(dept)"
+        var sdnHeadshotURL = "/img/2020/\(headshot)"
+        let sdnEducation = "\(degree), \(institution)"
+        let sdnStaffProfile = ""
         
-        var names:String = row[0].trimmingCharacters(in: .whitespacesAndNewlines)
-        names = names.replacingOccurrences(of:"Dr. ", with: "")
-        names = names.replacingOccurrences(of:"-", with: "")
-        let namesArr:[String] = names.split{$0 == " "}.map(String.init)
-        let first = namesArr[0]
-        let last = namesArr[1]
-        name = "\(last)-\(first)"
+        sdnHeadshotURL = sdnHeadshotURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        sdnHeadshotURL = sdnHeadshotURL.replacingOccurrences(of: " ", with: "")
+        if (pictured == "not pictured") {
+            sdnHeadshotURL = ""
+        }
         
         print("casuri will be: \(casuri) \t\t name will be: \(name)")
         print("\t creating asset for profile \(name): \(sdnName)")
         print("\t\t \(sdnTitle)" )
-        //let assetObj = createBlockRequest(u:apiClient.username, p:apiClient.password, site:siteName, definitionPath: definitionPath, parentFolderPath: casuri, name: name, title: title, sdnHeadshotURL: sdnHeadshotURL, sdnName: sdnName, sdnCollegeTitle: sdnCollegeTitle, sdnTitle: sdnTitle, sdnEducation:sdnEducation, sdnStaffProfile: sdnStaffProfile, tags:["2019", fullCollegeName])
-        let assetObj = createBlockRequest(u:apiClient.username, p:apiClient.password, site:siteName, definitionPath: definitionPath, parentFolderPath: casuri, name: name, title: sdnName, sdnTitle: sdnTitle, sdnName:sdnName, sdnBuilding:sdnBuilding, sdnPhone:sdnPhone, sdnEmail:sdnEmail)
+        let assetObj = createBlockRequest(u:apiClient.username, p:apiClient.password, site:siteName, definitionPath: definitionPath, parentFolderPath: casuri, name: name, title: title, sdnHeadshotURL: sdnHeadshotURL, sdnName: sdnName, sdnCollegeTitle: sdnCollegeTitle, sdnTitle: sdnTitle, sdnEducation:sdnEducation, sdnStaffProfile: sdnStaffProfile, tags:["2020", fullCollegeName])
         return assetObj
     }
     
-    public func createBlockRequest(u:String, p:String, site:String, definitionPath:String, parentFolderPath:String, name:String, title:String, sdnTitle:String, sdnName:String, sdnBuilding:String, sdnPhone:String, sdnEmail:String) ->
+    public func createBlockRequest(u:String, p:String, site:String, definitionPath:String, parentFolderPath:String, name:String, title:String, sdnHeadshotURL:String, sdnName:String, sdnCollegeTitle:String, sdnTitle:String, sdnEducation:String, sdnStaffProfile:String, tags:[String]) ->
         CreateBlockRequest {
             var brequest:CreateBlockRequest
-            let md:Metadata = Metadata(displayName:title, title:title)
+            let md:Metadata = Metadata(displayName:sdnName, title:sdnName)
             //, startDate: nil)
             let auth:Authentication = Authentication(username: u, password: p)
             var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
             //let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
-            let titleTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "fullName", text: sdnName, structuredDataNodes: nil, filePath: nil, assetType: nil)
-            let fullNameTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "title", text: sdnTitle, structuredDataNodes: nil, filePath: nil, assetType: nil)
-            let buildTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "campusAddress1", text: sdnBuilding, structuredDataNodes: nil, filePath: nil, assetType: nil)
-            let phoneTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "phone", text: sdnPhone, structuredDataNodes: nil, filePath: nil, assetType: nil)
-            let emailTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "email", text: sdnEmail, structuredDataNodes: nil, filePath: nil, assetType: nil)
-            let smGroup:StructuredDataNode = StructuredDataNode(type: "group", identifier: "staffMember", text: nil, structuredDataNodes: [fullNameTType, titleTType, buildTType, phoneTType, emailTType], filePath: nil, assetType: nil)
+            let sdnCollegeTitleTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "college-title", text:sdnCollegeTitle, structuredDataNodes: nil, filePath: nil, assetType:nil)
+            let sdnTitleTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "title", text: sdnTitle, structuredDataNodes: nil, filePath: nil, assetType: nil)
+            let educationTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "education", text: sdnEducation, structuredDataNodes: nil, filePath: nil, assetType: nil)
+            let sdnStaffProfileTType:StructuredDataNode = StructuredDataNode(type: "text", identifier: "staffProfile", text: sdnStaffProfile, structuredDataNodes: nil, filePath: nil, assetType: nil)
+            let headshotFType:StructuredDataNode = StructuredDataNode(type: "asset", identifier: "headshot", text: nil, structuredDataNodes: nil, filePath:sdnHeadshotURL, assetType:"file")
+
+            let smGroup:StructuredDataNode = StructuredDataNode(type: "group", identifier: "staffMember", text: nil, structuredDataNodes: [headshotFType, sdnTitleTType, sdnCollegeTitleTType, educationTType, sdnStaffProfileTType], filePath: nil, assetType: nil)
             sdn = StructuredData(structuredDataNodes: [smGroup], definitionPath:definitionPath)
-            let casTags:[CascadeTag] = []
+            var casTags:[CascadeTag] = []
+            for tag in tags {
+                casTags.append(CascadeTag(name: tag))
+            }
             let b:xhtmlDataDefinitionBlock = xhtmlDataDefinitionBlock(
                 structuredData:sdn,
                 metadata: md,

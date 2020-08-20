@@ -195,7 +195,8 @@ struct Blocker {
     public func createBlockRequest(u:String, p:String, site:String, definitionPath:String, parentFolderPath:String, name:String, title:String, sdnHeadshotURL:String, sdnName:String, sdnCollegeTitle:String, sdnTitle:String, sdnEducation:String, sdnStaffProfile:String, tags:[String]) ->
         CreateBlockRequest {
             var brequest:CreateBlockRequest
-            let md:Metadata = Metadata(displayName:title, title:title, startDate: nil)
+            let md:Metadata = Metadata(displayName:title, title:title)
+                //, startDate: nil)
             let auth:Authentication = Authentication(username: u, password: p)
             var sdn:StructuredData = StructuredData(structuredDataNodes: [], definitionPath: nil)
             //let docStr:String = try doc.body()!.html().htmlEscape(allowUnsafeSymbols:true)
