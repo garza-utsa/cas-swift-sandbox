@@ -22,8 +22,8 @@ struct Poster {
     //print(file)
     //worklaptop: 50 and 13
     //homelaptop: 49 and 13
-    let prefixCount = 50
-    let suffixCount = 13
+    let prefixCount = 56
+    let suffixCount = 5
 
     init(client:APIClient, site:String, contentType:String, targetPath:String) {
         //init(client:APIClient, site:String, contentType:String, targetPath:String, dispatchQueue:DispatchQueue, semaphore:DispatchSemaphore) {
@@ -63,7 +63,7 @@ struct Poster {
     mutating func evaluate(targetURL:URL, targetResources:URLResourceValues) {
         let path = targetResources.path ?? ""
         let name = targetResources.name ?? ""
-        if (name == "snippet.html") {
+        if (path.contains("accommodations")) {
             //print("parse: \(name) at \(path)")
             let snippet:Document = parseTarget(file:targetURL)
             if (snippet.body() != nil) {
@@ -92,20 +92,26 @@ struct Poster {
     
     func post(file:URL, snippet:Document, path:String) {
         do {
-            var casuri:String = file.path.dropFirst(prefixCount).dropLast(suffixCount).lowercased()
+            let folderURL = file.deletingLastPathComponent()
+
+            var casuri:String = folderURL.path.dropFirst(prefixCount).lowercased()
             if (casuri == "") {
                 casuri = "/"
             }
-            let name:String = "index"
+            var name:String = file.lastPathComponent
+            name = name.dropLast(suffixCount).lowercased()
             //print("casuri will be: \(casuri)")
             //print("name will be: \(name)")
             let mainDiv:Element = try snippet.getElementsByTag("div").first() ?? Element.init(Tag.init("div"), "")
             let title = try mainDiv.attr("title")
+            try mainDiv.select("h1").remove()
+            let innerDocString:String = try! mainDiv.html()
+            let newDoc:Document = try SwiftSoup.parse(innerDocString)
             //print("title: \(title)")
             if (title != "") {
                 //print("file content: \(file)")
             }
-            let assetObj = createAssetRequest(u:apiClient.username, p:apiClient.password, site:siteName, contentType:targetContentType, title: title, parentFolderPath: casuri, name: name, doc: snippet)
+            let assetObj = createAssetRequest(u:apiClient.username, p:apiClient.password, site:siteName, contentType:targetContentType, title: title, parentFolderPath: casuri, name: name, doc: newDoc)
             let encoder = JSONEncoder()
             let encodedAsset = try encoder.encode(assetObj)
             // does not wait. But the code in notify() gets run

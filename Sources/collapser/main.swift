@@ -7,17 +7,17 @@ enum runMode {
     case news
     case search
     case custom
-    case csv
+    //case csv
 }
 
-let mode:runMode = .csv
+let mode:runMode = .post
 let apiEndpoint:URL = URL(string: "https://localhost:8443/api/v1/")!
-let localTarget = "/Users/rjq475/Development-vpaa/collapsed/news"
-let contentSelector = ".news_article_info"
-let siteName = "GLOBAL-WWWROOT"
-let contentType = "ROOT EE Page - Content"
+let localTarget = "/Users/rjq475/Development-vpaa/collapsed/disability-site"
+let contentSelector = "#col-main"
+let siteName = "VPAA-DISABILITY-SERVICES-WWWROOT"
+let contentType = "UTSA-WWWROOT:SITE/ROOT Site Page - Content Rows"
 let newsContentType = "news/Blog v1.2"
-let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "jgarza", password: "We can make it Saturday forever!") //real secure
+let apiClient = APIClient(baseEndpointURL: apiEndpoint, username: "admin", password: "admin") //real secure
 
 switch mode {
     case .crawl:
@@ -42,13 +42,15 @@ switch mode {
         print("starting search")
         _ = search.searchAndDestroy()
     case .custom:
-        var b = Blocker(client:apiClient, site: "NEWFACULTY-VPUR-WWW", targetPath:"/Users/rjq475/Downloads", definitionPath: "Block - New Faculty")
-        print("starting search")
+        var b = FaqBlocker(client:apiClient, site: "CORONAVIRUS-PRES-WWWROOT", targetPath:"/Users/rjq475/Development-vpaa/collapsed/faq-site", definitionPath: "faq-block")
+        print("starting faq block creator")
         _ = b.crawl()
+    /*
     case .csv:
         var csvr = CSVer(client: apiClient, site: "PROVOST-VPAA-PROVWEB", targetPath: "/Users/rjq475/Downloads", definitionPath: "SITE/SITE Block - Staff Profile")
         print("starting csv crawl")
         _ = csvr.crawl()
+    */
 }
 
 while (apiClient.oq.operations.count != 0) {

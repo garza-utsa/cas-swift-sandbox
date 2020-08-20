@@ -9,7 +9,7 @@ import Foundation
 import SwiftSoup
 import HTMLEntities
 
-struct Crawler {
+struct FaqCrawler {
     var count:Int = 0
     var targetPath:String = "."
     var targetSelector:String = ""
@@ -49,7 +49,6 @@ struct Crawler {
         let path = targetResources.path ?? ""
         let name = targetResources.name ?? ""
         if (name.hasSuffix(".html")) {
-        //if (name == "index.html") {
             print("parse: \(name) at \(path)")
             let snippet:String = parseTarget(file:targetURL)
             if (snippet != "") {
@@ -63,27 +62,9 @@ struct Crawler {
     }
 
     func parseTarget(file:URL) -> String {
-        var snippet:String = ""
+        let snippet:String = ""
         do {
-
             let html:String = try String(contentsOf:file, encoding: .utf8)
-            let doc:Document = try SwiftSoup.parse(html)
-            var title: String = ""
-            let headingElement:Element? = try doc.getElementsByTag("h1").last()
-            if (headingElement != nil) {
-                title = try headingElement!.text()
-            }
-            var parentDiv: Element = Element.init(Tag.init("div"), "")
-            //var titleSpan: Element = Element.init(Tag.init("span"), "")
-            let contentDivs:Elements = try doc.select(self.targetSelector)
-            //let contentDivs:Elements = try doc.select(".news_article_info")
-            if (contentDivs.size() == 1) {
-                parentDiv = contentDivs.first()!
-                try parentDiv.attr("title", title)
-                //try parentDiv.select("h1").remove()
-                //try parentDiv.text(parentDiv.text().addingASCIIEntities)
-            }
-            snippet = try parentDiv.outerHtml()
             //snippet = try SwiftSoup.Parser.unescapeEntities(snippet, false)
             //snippet = snippet.addingUnicodeEntities
         } catch Exception.Error(let type, let message) {
@@ -96,10 +77,13 @@ struct Crawler {
     }
     
     func snip(file:URL, snippet:String) {
-        print("snippet URL is: \(file)")
+        let oldTarget = file.lastPathComponent
+        var newTarget = file.deletingLastPathComponent()
+        newTarget = newTarget.appendingPathComponent("\(oldTarget)-snippet.html")
+        print("snippet URL is: \(newTarget)")
         do {
             let fileData:Data = snippet.data(using: .utf8)!
-            try fileData.write(to: file, options: [.atomic])
+            try fileData.write(to: newTarget, options: [.atomic])
         } catch Exception.Error(let type, let message) {
             print("Error while trying to overwrite html from \(file)")
             print("\(type):\(message)")
